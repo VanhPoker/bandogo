@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Badge } from "./ui/badge";
@@ -10,11 +10,23 @@ import {
   Menu, 
   X,
   Phone,
-  Mail
+  Mail,
+  LogOut,
+  Settings
 } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, profile, isAdmin, signOut } = useAuth();
+  const navigate = useNavigate();
 
   const navigation = [
     { name: "Trang chủ", href: "/" },
@@ -24,6 +36,11 @@ export const Header = () => {
     { name: "Giới thiệu", href: "/about" },
     { name: "Liên hệ", href: "/contact" }
   ];
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate("/");
+  };
 
   return (
     <header className="bg-background border-b border-border sticky top-0 z-50">
@@ -42,12 +59,20 @@ export const Header = () => {
               </div>
             </div>
             <div className="hidden md:flex items-center gap-4">
-              <Link to="/login" className="text-muted-foreground hover:text-primary transition-colors">
-                Đăng nhập
-              </Link>
-              <Link to="/register" className="text-muted-foreground hover:text-primary transition-colors">
-                Đăng ký
-              </Link>
+              {user ? (
+                <span className="text-muted-foreground">
+                  Xin chào, {profile?.display_name || user.email}
+                </span>
+              ) : (
+                <>
+                  <Link to="/auth" className="text-muted-foreground hover:text-primary transition-colors">
+                    Đăng nhập
+                  </Link>
+                  <Link to="/auth" className="text-muted-foreground hover:text-primary transition-colors">
+                    Đăng ký
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -86,9 +111,39 @@ export const Header = () => {
             </Button>
 
             {/* User account */}
-            <Button variant="ghost" size="icon" className="hidden sm:flex">
-              <User className="w-5 h-5" />
-            </Button>
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="hidden sm:flex">
+                    <User className="w-5 h-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem className="font-medium">
+                    {profile?.display_name || user.email}
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  {isAdmin && (
+                    <DropdownMenuItem asChild>
+                      <Link to="/admin" className="flex items-center gap-2">
+                        <Settings className="w-4 h-4" />
+                        Quản lý
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 text-destructive">
+                    <LogOut className="w-4 h-4" />
+                    Đăng xuất
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button variant="ghost" size="icon" className="hidden sm:flex" asChild>
+                <Link to="/auth">
+                  <User className="w-5 h-5" />
+                </Link>
+              </Button>
+            )}
 
             {/* Shopping cart */}
             <Button variant="ghost" size="icon" className="relative">
