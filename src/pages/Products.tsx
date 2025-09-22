@@ -1,56 +1,12 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { ProductCard } from "@/components/ProductCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Search, Filter, Grid, List } from "lucide-react";
+import { useProducts } from "@/hooks/useProducts";
 
-const MOCK_PRODUCTS = [
-  {
-    id: "1",
-    name: "Ván MFC Melamine Trắng",
-    price: "850,000",
-    originalPrice: "900,000",
-    image: "/placeholder.svg",
-    category: "Ván MFC",
-    specs: ["18mm", "2440x1220mm", "Chống ẩm"],
-    rating: 4.8,
-    reviews: 124
-  },
-  {
-    id: "2", 
-    name: "Ván MDF Lõi Xanh",
-    price: "320,000",
-    image: "/placeholder.svg",
-    category: "Ván MDF",
-    specs: ["15mm", "2440x1220mm", "Chống cháy"],
-    rating: 4.6,
-    reviews: 89
-  },
-  {
-    id: "3",
-    name: "Ván Plywood Eucalyptus",
-    price: "1,200,000", 
-    image: "/placeholder.svg",
-    category: "Ván Plywood",
-    specs: ["12mm", "2440x1220mm", "Chống mối mọt"],
-    rating: 4.9,
-    reviews: 156
-  },
-  {
-    id: "4",
-    name: "Ván Dăm Chống Ẩm",
-    price: "280,000",
-    image: "/placeholder.svg", 
-    category: "Ván Dăm",
-    specs: ["16mm", "2440x1220mm", "Độ bền cao"],
-    rating: 4.5,
-    reviews: 67
-  }
-];
-
-const CATEGORIES = ["Tất cả", "Ván MFC", "Ván MDF", "Ván Plywood", "Ván Dăm", "Phụ kiện"];
 const COLORS = ["Tất cả", "Trắng", "Xám", "Vân gỗ sồi", "Vân gỗ óc chó", "Đen"];
 const SIZES = ["Tất cả", "2440x1220mm", "2800x2070mm", "1830x2440mm"];
 const THICKNESS = ["Tất cả", "6mm", "9mm", "12mm", "15mm", "18mm", "25mm"];
@@ -64,6 +20,62 @@ export default function Products() {
   const [sortBy, setSortBy] = useState("newest");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [showFilters, setShowFilters] = useState(false);
+
+  const { products, categories, loading } = useProducts();
+
+  // Create categories list with "Tất cả" option
+  const categoryOptions = useMemo(() => {
+    const categoryNames = categories.map(cat => cat.name);
+    return ["Tất cả", ...categoryNames];
+  }, [categories]);
+
+  // Filter and sort products
+  const filteredProducts = useMemo(() => {
+    let filtered = products.filter(product => {
+      // Search filter
+      if (searchTerm && !product.name.toLowerCase().includes(searchTerm.toLowerCase())) {
+        return false;
+      }
+      
+      // Category filter
+      if (selectedCategory !== "Tất cả" && product.category !== selectedCategory) {
+        return false;
+      }
+
+      // Other filters can be added here based on specifications
+      return true;
+    });
+
+    // Sort products
+    switch (sortBy) {
+      case 'price-low':
+        filtered.sort((a, b) => a.price - b.price);
+        break;
+      case 'price-high':
+        filtered.sort((a, b) => b.price - a.price);
+        break;
+      case 'name':
+        filtered.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case 'newest':
+      default:
+        filtered.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+        break;
+    }
+
+    return filtered;
+  }, [products, searchTerm, selectedCategory, sortBy]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mb-4"></div>
+          <p className="text-muted-foreground">Đang tải sản phẩm...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -104,7 +116,7 @@ export default function Products() {
                 <div>
                   <label className="block text-sm font-medium mb-3">Danh mục</label>
                   <div className="space-y-2">
-                    {CATEGORIES.map((category) => (
+                    {categoryOptions.map((category) => (
                       <label key={category} className="flex items-center gap-2 cursor-pointer">
                         <input
                           type="radio"
@@ -196,7 +208,7 @@ export default function Products() {
                 </Button>
                 
                 <p className="text-muted-foreground">
-                  Hiển thị {MOCK_PRODUCTS.length} sản phẩm
+                  Hiển thị {filteredProducts.length} sản phẩm
                 </p>
               </div>
 
@@ -271,14 +283,30 @@ export default function Products() {
                 ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" 
                 : "grid-cols-1"
             }`}>
-              {MOCK_PRODUCTS.map((product) => (
+              {filteredProducts.map((product) => (
                 <ProductCard
                   key={product.id}
-                  {...product}
+                  id={product.id}
+                  name={product.name}
+                  price={product.price.toLocaleString('vi-VN')}
+                  image={product.images?.[0] || '/placeholder.svg'}
+                  category={product.category}
+                  specs={product.specifications?.features || []}
+                  rating={4.5} // Default rating, can be enhanced later
+                  reviews={0} // Default reviews, can be enhanced later
                   className={viewMode === "list" ? "flex-row" : ""}
                 />
               ))}
             </div>
+
+            {filteredProducts.length === 0 && (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground text-lg">Không tìm thấy sản phẩm nào</p>
+                <p className="text-sm text-muted-foreground mt-2">
+                  Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm
+                </p>
+              </div>
+            )}
 
             {/* Load More */}
             <div className="text-center mt-12">

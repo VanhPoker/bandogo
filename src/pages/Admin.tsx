@@ -1,9 +1,10 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
 import { 
   Package, 
   Users, 
@@ -12,10 +13,14 @@ import {
   Plus,
   Settings
 } from "lucide-react";
+import { ProductForm } from "@/components/ProductForm";
+import { useProducts } from "@/hooks/useProducts";
 
 const Admin = () => {
   const { user, isAdmin, loading } = useAuth();
   const navigate = useNavigate();
+  const { products, categories } = useProducts();
+  const [showProductForm, setShowProductForm] = useState(false);
 
   useEffect(() => {
     if (!loading && (!user || !isAdmin)) {
@@ -53,7 +58,7 @@ const Admin = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Tổng sản phẩm</p>
-                  <p className="text-2xl font-bold">156</p>
+                  <p className="text-2xl font-bold">{products.length}</p>
                 </div>
                 <Package className="h-8 w-8 text-primary" />
               </div>
@@ -107,29 +112,71 @@ const Admin = () => {
           </TabsList>
 
           <TabsContent value="products" className="space-y-4">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-2xl font-bold">Quản lý sản phẩm</h2>
+                <p className="text-muted-foreground">
+                  Thêm, sửa, xóa và quản lý tất cả sản phẩm gỗ ép
+                </p>
+              </div>
+              <Button onClick={() => setShowProductForm(!showProductForm)}>
+                <Plus className="w-4 h-4 mr-2" />
+                {showProductForm ? 'Ẩn form' : 'Thêm sản phẩm'}
+              </Button>
+            </div>
+
+            {showProductForm && (
+              <ProductForm onSuccess={() => setShowProductForm(false)} />
+            )}
+
             <Card>
               <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle>Quản lý sản phẩm</CardTitle>
-                    <CardDescription>
-                      Thêm, sửa, xóa và quản lý tất cả sản phẩm gỗ ép
-                    </CardDescription>
-                  </div>
-                  <Button>
-                    <Plus className="w-4 h-4 mr-2" />
-                    Thêm sản phẩm
-                  </Button>
-                </div>
+                <CardTitle>Danh sách sản phẩm</CardTitle>
+                <CardDescription>
+                  Tổng cộng {products.length} sản phẩm trong {categories.length} danh mục
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="text-center py-12 text-muted-foreground">
-                  <Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p>Chức năng quản lý sản phẩm sẽ được triển khai ở đây</p>
-                  <p className="text-sm mt-2">
-                    Bao gồm: Thêm/sửa/xóa sản phẩm, quản lý hình ảnh, danh mục, giá cả
-                  </p>
-                </div>
+                {products.length === 0 ? (
+                  <div className="text-center py-12 text-muted-foreground">
+                    <Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <p>Chưa có sản phẩm nào</p>
+                    <p className="text-sm mt-2">
+                      Nhấn "Thêm sản phẩm" để bắt đầu thêm sản phẩm đầu tiên
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {products.map((product) => (
+                      <div key={product.id} className="flex items-center justify-between p-4 border rounded-lg">
+                        <div className="flex items-center space-x-4">
+                          <img
+                            src={product.images?.[0] || '/placeholder.svg'}
+                            alt={product.name}
+                            className="w-16 h-16 object-cover rounded-md"
+                          />
+                          <div>
+                            <h3 className="font-medium">{product.name}</h3>
+                            <p className="text-sm text-muted-foreground">{product.category}</p>
+                            <p className="text-sm font-medium">{product.price.toLocaleString('vi-VN')} VNĐ</p>
+                            <p className="text-xs text-muted-foreground">Kho: {product.stock_quantity}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Badge variant={product.is_active ? "default" : "secondary"}>
+                            {product.is_active ? "Hoạt động" : "Tạm dừng"}
+                          </Badge>
+                          <Button variant="outline" size="sm">
+                            Sửa
+                          </Button>
+                          <Button variant="destructive" size="sm">
+                            Xóa
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
