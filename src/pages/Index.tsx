@@ -46,28 +46,28 @@ const Index = () => {
     {
       id: "mfc",
       name: "Ván MFC",
-      image: "/placeholder.svg",
+      image: "/images/vanmfc.jpg",
       description: "Ván ép phủ melamine cao cấp, bề mặt nhẵn, màu sắc đa dạng",
       productCount: 45
     },
     {
       id: "mdf", 
       name: "Ván MDF",
-      image: "/placeholder.svg",
+      image: "/images/vanmdf.jpg",
       description: "Ván sợi mật độ cao, dễ gia công, phù hợp làm nội thất",
       productCount: 32
     },
     {
       id: "plywood",
       name: "Ván Plywood", 
-      image: "/placeholder.svg",
+      image: "/images/vanplywood.jpg",
       description: "Ván ghép nhiều lớp, độ bền cao, chống cong vênh",
       productCount: 28
     },
     {
       id: "particle",
       name: "Ván Dăm",
-      image: "/placeholder.svg", 
+      image: "/images/vandam.jpg",
       description: "Ván dăm ép, giá thành hợp lý, chất lượng ổn định",
       productCount: 18
     }
@@ -101,7 +101,7 @@ const Index = () => {
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat" 
           style={{
-            backgroundImage: "url('/placeholder.svg')",
+            backgroundImage: "url('/images/son-hieu-ung-1.jpg')", // Thay đường dẫn này bằng đường dẫn ảnh mới
           }}
         />
         <div className="absolute inset-0 bg-black/40" />
