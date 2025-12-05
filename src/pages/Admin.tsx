@@ -19,6 +19,7 @@ import {
 import { ProductForm } from "@/components/ProductForm";
 import { NewsManager } from "@/components/admin/NewsManager";
 import { ProjectsManager } from "@/components/admin/ProjectsManager";
+import { UsersManager } from "@/components/admin/UsersManager";
 import { useProducts } from "@/hooks/useProducts";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -299,52 +300,25 @@ const Admin = () => {
             <NewsManager />
           </TabsContent>
 
-          <TabsContent value="projects" className="space-y-4">
-            <ProjectsManager />
-          </TabsContent>
-
-          <TabsContent value="users" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Quản lý người dùng</CardTitle>
-                <CardDescription>
-                  Quản lý tài khoản người dùng và phân quyền
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-12 text-muted-foreground">
-                  <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p>Chức năng quản lý người dùng sẽ được triển khai ở đây</p>
-                  <p className="text-sm mt-2">
-                    Bao gồm: Xem danh sách user, phân quyền admin, khóa tài khoản
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="settings" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Cài đặt hệ thống</CardTitle>
-                <CardDescription>
-                  Cấu hình các thông số của website
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-12 text-muted-foreground">
-                  <Settings className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p>Chức năng cài đặt hệ thống sẽ được triển khai ở đây</p>
-                  <p className="text-sm mt-2">
-                    Bao gồm: Thông tin công ty, logo, thông tin liên hệ, SEO
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      </div>
-    </div>
+          <CardTitle>Cài đặt hệ thống</CardTitle>
+          <CardDescription>
+            Cấu hình các thông số của website
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-12 text-muted-foreground">
+            <Settings className="h-12 w-12 mx-auto mb-4 opacity-50" />
+            <p>Chức năng cài đặt hệ thống sẽ được triển khai ở đây</p>
+            <p className="text-sm mt-2">
+              Bao gồm: Thông tin công ty, logo, thông tin liên hệ, SEO
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    </TabsContent>
+        </Tabs >
+      </div >
+    </div >
   );
 };
 
