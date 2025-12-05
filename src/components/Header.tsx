@@ -3,18 +3,21 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Badge } from "./ui/badge";
-import { 
-  Search, 
-  ShoppingCart, 
-  User, 
-  Menu, 
+import {
+  Search,
+  ShoppingCart,
+  User,
+  Menu,
   X,
   Phone,
   Mail,
   LogOut,
-  Settings
+  Settings,
+  ChevronDown
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useCart } from "@/hooks/useCart";
+import { useCategories } from "@/hooks/useCategories";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,11 +29,23 @@ import {
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, profile, isAdmin, signOut } = useAuth();
+  const { totalItems } = useCart();
+  const { categories } = useCategories();
   const navigate = useNavigate();
 
   const navigation = [
     { name: "Trang chủ", href: "/" },
-    { name: "Sản phẩm", href: "/products" },
+    {
+      name: "Sản phẩm",
+      href: "/products",
+      children: [
+        { name: "Tất cả sản phẩm", href: "/products" },
+        ...categories.map(cat => ({
+          name: cat.name,
+          href: `/products?category=${encodeURIComponent(cat.name)}`
+        }))
+      ]
+    },
     { name: "Dự án", href: "/projects" },
     { name: "Tin tức", href: "/news" },
     { name: "Giới thiệu", href: "/about" },
@@ -95,8 +110,8 @@ export const Header = () => {
           {/* Search bar - Desktop */}
           <div className="hidden md:flex items-center flex-1 max-w-lg mx-8">
             <div className="relative w-full">
-              <Input 
-                placeholder="Tìm kiếm sản phẩm..." 
+              <Input
+                placeholder="Tìm kiếm sản phẩm..."
                 className="pr-10"
               />
               <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -149,13 +164,13 @@ export const Header = () => {
             <Button variant="ghost" size="icon" className="relative">
               <ShoppingCart className="w-5 h-5" />
               <Badge className="absolute -top-2 -right-2 w-5 h-5 p-0 flex items-center justify-center text-xs">
-                0
+                {totalItems}
               </Badge>
             </Button>
 
             {/* Mobile menu button */}
-            <Button 
-              variant="ghost" 
+            <Button
+              variant="ghost"
               size="icon"
               className="md:hidden"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -169,13 +184,29 @@ export const Header = () => {
         <nav className="hidden md:block border-t border-border/50">
           <div className="flex items-center justify-center space-x-8 py-4">
             {navigation.map((item) => (
-              <Link
-                key={item.name}
-                to={item.href}
-                className="text-foreground hover:text-primary transition-colors font-medium"
-              >
-                {item.name}
-              </Link>
+              item.children ? (
+                <DropdownMenu key={item.name}>
+                  <DropdownMenuTrigger className="flex items-center gap-1 text-foreground hover:text-primary transition-colors font-medium outline-none">
+                    {item.name}
+                    <ChevronDown className="w-4 h-4" />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    {item.children.map((child) => (
+                      <DropdownMenuItem key={child.name} asChild>
+                        <Link to={child.href}>{child.name}</Link>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className="text-foreground hover:text-primary transition-colors font-medium"
+                >
+                  {item.name}
+                </Link>
+              )
             ))}
           </div>
         </nav>
@@ -190,18 +221,37 @@ export const Header = () => {
               <Input placeholder="Tìm kiếm sản phẩm..." className="pr-10" />
               <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             </div>
-            
+
             {/* Mobile navigation */}
             <nav className="space-y-2">
               {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  className="block py-2 text-foreground hover:text-primary transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {item.name}
-                </Link>
+                <div key={item.name}>
+                  {item.children ? (
+                    <div className="space-y-2">
+                      <div className="font-medium px-2 py-2">{item.name}</div>
+                      <div className="pl-4 space-y-2 border-l-2 border-border ml-2">
+                        {item.children.map((child) => (
+                          <Link
+                            key={child.name}
+                            to={child.href}
+                            className="block py-1 text-sm text-muted-foreground hover:text-primary transition-colors"
+                            onClick={() => setIsMenuOpen(false)}
+                          >
+                            {child.name}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <Link
+                      to={item.href}
+                      className="block py-2 text-foreground hover:text-primary transition-colors"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      {item.name}
+                    </Link>
+                  )}
+                </div>
               ))}
             </nav>
           </div>

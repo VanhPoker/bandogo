@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -22,19 +22,60 @@ interface ProductFormData {
   features: string[];
 }
 
-interface ProductFormProps {
-  onSuccess?: () => void;
+interface Product {
+  id: string;
+  name: string;
+  price: number;
+  category: string;
+  description: string | null;
+  specifications: any;
+  images: string[] | null;
+  stock_quantity: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
-export const ProductForm = ({ onSuccess }: ProductFormProps) => {
+interface ProductFormProps {
+  onSuccess?: () => void;
+  initialData?: Product | null;
+}
+
+export const ProductForm = ({ onSuccess, initialData }: ProductFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
   const [features, setFeatures] = useState<string[]>([]);
   const [newFeature, setNewFeature] = useState('');
-  
-  const { categories, uploadProductImage, createProduct } = useProducts();
-  
+
+  const { categories, uploadProductImage, createProduct, updateProduct } = useProducts();
+
   const { register, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm<ProductFormData>();
+
+  useEffect(() => {
+    if (initialData) {
+      setValue('name', initialData.name);
+      setValue('price', initialData.price);
+      setValue('category', initialData.category);
+      setValue('description', initialData.description || '');
+      setValue('stock_quantity', initialData.stock_quantity);
+
+      if (initialData.specifications) {
+        setValue('thickness', initialData.specifications.thickness || '');
+        setValue('size', initialData.specifications.size || '');
+        if (initialData.specifications.features) {
+          setFeatures(initialData.specifications.features);
+        }
+      }
+
+      if (initialData.images) {
+        setUploadedImages(initialData.images);
+      }
+    } else {
+      reset();
+      setUploadedImages([]);
+      setFeatures([]);
+    }
+  }, [initialData, setValue, reset]);
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -82,7 +123,7 @@ export const ProductForm = ({ onSuccess }: ProductFormProps) => {
         features: features
       };
 
-      await createProduct({
+      const productData = {
         name: data.name,
         price: data.price,
         category: data.category,
@@ -91,7 +132,13 @@ export const ProductForm = ({ onSuccess }: ProductFormProps) => {
         images: uploadedImages,
         stock_quantity: data.stock_quantity,
         is_active: true
-      });
+      };
+
+      if (initialData) {
+        await updateProduct(initialData.id, productData);
+      } else {
+        await createProduct(productData);
+      }
 
       // Reset form
       reset();
@@ -99,7 +146,7 @@ export const ProductForm = ({ onSuccess }: ProductFormProps) => {
       setFeatures([]);
       onSuccess?.();
     } catch (error) {
-      console.error('Error creating product:', error);
+      console.error('Error saving product:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -108,7 +155,7 @@ export const ProductForm = ({ onSuccess }: ProductFormProps) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Thêm Sản Phẩm Mới</CardTitle>
+        <CardTitle>{initialData ? 'Cập Nhật Sản Phẩm' : 'Thêm Sản Phẩm Mới'}</CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -129,7 +176,7 @@ export const ProductForm = ({ onSuccess }: ProductFormProps) => {
               <Input
                 id="price"
                 type="number"
-                {...register('price', { 
+                {...register('price', {
                   required: 'Giá là bắt buộc',
                   min: { value: 0, message: 'Giá phải lớn hơn 0' }
                 })}
@@ -142,7 +189,10 @@ export const ProductForm = ({ onSuccess }: ProductFormProps) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="category">Danh mục *</Label>
-              <Select onValueChange={(value) => setValue('category', value)}>
+              <Select
+                onValueChange={(value) => setValue('category', value)}
+                defaultValue={initialData?.category}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Chọn danh mục" />
                 </SelectTrigger>
@@ -161,7 +211,7 @@ export const ProductForm = ({ onSuccess }: ProductFormProps) => {
               <Input
                 id="stock_quantity"
                 type="number"
-                {...register('stock_quantity', { 
+                {...register('stock_quantity', {
                   required: 'Số lượng tồn kho là bắt buộc',
                   min: { value: 0, message: 'Số lượng phải lớn hơn hoặc bằng 0' }
                 })}
@@ -255,7 +305,7 @@ export const ProductForm = ({ onSuccess }: ProductFormProps) => {
                 </p>
               </label>
             </div>
-            
+
             {uploadedImages.length > 0 && (
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
                 {uploadedImages.map((image, index) => (
@@ -279,7 +329,7 @@ export const ProductForm = ({ onSuccess }: ProductFormProps) => {
           </div>
 
           <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? 'Đang xử lý...' : 'Thêm Sản Phẩm'}
+            {isSubmitting ? 'Đang xử lý...' : (initialData ? 'Lưu Thay Đổi' : 'Thêm Sản Phẩm')}
           </Button>
         </form>
       </CardContent>

@@ -1,4 +1,5 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { ProductCard } from "@/components/ProductCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,8 +13,9 @@ const SIZES = ["Tất cả", "2440x1220mm", "2800x2070mm", "1830x2440mm"];
 const THICKNESS = ["Tất cả", "6mm", "9mm", "12mm", "15mm", "18mm", "25mm"];
 
 export default function Products() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("Tất cả");
+  const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") || "Tất cả");
   const [selectedColor, setSelectedColor] = useState("Tất cả");
   const [selectedSize, setSelectedSize] = useState("Tất cả");
   const [selectedThickness, setSelectedThickness] = useState("Tất cả");
@@ -22,6 +24,25 @@ export default function Products() {
   const [showFilters, setShowFilters] = useState(false);
 
   const { products, categories, loading } = useProducts();
+
+  useEffect(() => {
+    const category = searchParams.get("category");
+    if (category) {
+      setSelectedCategory(category);
+    } else {
+      setSelectedCategory("Tất cả");
+    }
+  }, [searchParams]);
+
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category);
+    if (category === "Tất cả") {
+      searchParams.delete("category");
+    } else {
+      searchParams.set("category", category);
+    }
+    setSearchParams(searchParams);
+  };
 
   // Create categories list with "Tất cả" option
   const categoryOptions = useMemo(() => {
@@ -36,7 +57,7 @@ export default function Products() {
       if (searchTerm && !product.name.toLowerCase().includes(searchTerm.toLowerCase())) {
         return false;
       }
-      
+
       // Category filter
       if (selectedCategory !== "Tất cả" && product.category !== selectedCategory) {
         return false;
@@ -89,7 +110,7 @@ export default function Products() {
             <p className="text-xl opacity-90 mb-8">
               Khám phá bộ sưu tập đa dạng các loại gỗ ép chất lượng cao
             </p>
-            
+
             {/* Search Bar */}
             <div className="relative max-w-md">
               <Input
@@ -110,7 +131,7 @@ export default function Products() {
           <aside className={`lg:w-80 ${showFilters ? 'block' : 'hidden lg:block'}`}>
             <div className="bg-card rounded-lg border p-6 sticky top-24">
               <h3 className="font-semibold text-lg mb-6">Bộ lọc sản phẩm</h3>
-              
+
               <div className="space-y-6">
                 {/* Category Filter */}
                 <div>
@@ -122,7 +143,7 @@ export default function Products() {
                           type="radio"
                           name="category"
                           checked={selectedCategory === category}
-                          onChange={() => setSelectedCategory(category)}
+                          onChange={() => handleCategoryChange(category)}
                           className="w-4 h-4 text-primary"
                         />
                         <span className="text-sm">{category}</span>
@@ -176,11 +197,11 @@ export default function Products() {
                   </Select>
                 </div>
 
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={() => {
-                    setSelectedCategory("Tất cả");
-                    setSelectedColor("Tất cả"); 
+                    handleCategoryChange("Tất cả");
+                    setSelectedColor("Tất cả");
                     setSelectedSize("Tất cả");
                     setSelectedThickness("Tất cả");
                   }}
@@ -206,7 +227,7 @@ export default function Products() {
                   <Filter className="w-4 h-4 mr-2" />
                   Bộ lọc
                 </Button>
-                
+
                 <p className="text-muted-foreground">
                   Hiển thị {filteredProducts.length} sản phẩm
                 </p>
@@ -254,7 +275,7 @@ export default function Products() {
               {selectedCategory !== "Tất cả" && (
                 <Badge variant="secondary" className="gap-2">
                   {selectedCategory}
-                  <button onClick={() => setSelectedCategory("Tất cả")}>×</button>
+                  <button onClick={() => handleCategoryChange("Tất cả")}>×</button>
                 </Badge>
               )}
               {selectedColor !== "Tất cả" && (
@@ -278,11 +299,10 @@ export default function Products() {
             </div>
 
             {/* Products Grid */}
-            <div className={`grid gap-6 ${
-              viewMode === "grid" 
-                ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" 
+            <div className={`grid gap-6 ${viewMode === "grid"
+                ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
                 : "grid-cols-1"
-            }`}>
+              }`}>
               {filteredProducts.map((product) => (
                 <ProductCard
                   key={product.id}

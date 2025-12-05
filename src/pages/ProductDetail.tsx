@@ -1,15 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
+import { useCart } from "@/hooks/useCart";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProductCard } from "@/components/ProductCard";
-import { 
-  Star, 
-  Heart, 
-  Share2, 
-  ShoppingCart, 
+import { supabase } from "@/integrations/supabase/client";
+import {
+  Star,
+  Heart,
+  Share2,
+  ShoppingCart,
   Download,
   ChevronLeft,
   ChevronRight,
@@ -19,65 +21,32 @@ import {
   Phone
 } from "lucide-react";
 
-const MOCK_PRODUCT = {
-  id: "1",
-  name: "Ván MFC Melamine Trắng Premium",
-  code: "MFC-ML-W-18",
-  price: "850,000",
-  originalPrice: "900,000",
-  category: "Ván MFC",
-  brand: "Gỗ Ép Premium",
-  rating: 4.8,
-  reviews: 124,
-  inStock: true,
-  images: [
-    "/placeholder.svg",
-    "/placeholder.svg", 
-    "/placeholder.svg",
-    "/placeholder.svg"
-  ],
-  description: "Ván MFC Melamine Trắng Premium là sản phẩm cao cấp với bề mặt Melamine trắng tinh khiết, độ bền cao và khả năng chống ẩm tốt. Thích hợp cho nội thất cao cấp như tủ bếp, tủ quần áo, bàn làm việc.",
-  specifications: {
-    "Kích thước": "2440 x 1220 mm",
-    "Độ dày": "18 mm",
-    "Chất liệu lõi": "Ván dăm chất lượng cao",
-    "Bề mặt": "Melamine trắng",
-    "Cạnh": "ABS 2mm",
-    "Độ ẩm": "≤ 8%",
-    "Formaldehyde": "E1 (≤ 9mg/100g)",
-    "Khối lượng riêng": "680-720 kg/m³",
-    "Chứng nhận": "CARB, FSC"
-  },
-  features: [
-    "Bề mặt Melamine chống trầy xước",
-    "Kháng ẩm và chống cong vênh",
-    "Dễ dàng gia công và lắp đặt", 
-    "Thân thiện với môi trường",
-    "Màu sắc ổn định theo thời gian"
-  ],
-  applications: [
-    "Tủ bếp cao cấp",
-    "Tủ quần áo, tủ giày",
-    "Bàn làm việc, kệ sách",
-    "Vách ngăn, cửa phòng",
-    "Nội thất văn phòng"
-  ]
-};
+interface Product {
+  id: string;
+  name: string;
+  price: number;
+  category: string;
+  description: string;
+  images: string[];
+  specifications: any;
+  stock_quantity: number;
+  is_active: boolean;
+}
 
 const RELATED_PRODUCTS = [
   {
     id: "2",
     name: "Ván MFC Melamine Xám",
-    price: "820,000",
+    price: 820000,
     image: "/placeholder.svg",
     category: "Ván MFC",
     rating: 4.7,
     reviews: 89
   },
   {
-    id: "3", 
+    id: "3",
     name: "Ván MFC Vân Gỗ Sồi",
-    price: "950,000",
+    price: 950000,
     image: "/placeholder.svg",
     category: "Ván MFC",
     rating: 4.9,
@@ -86,7 +55,7 @@ const RELATED_PRODUCTS = [
   {
     id: "4",
     name: "Cạnh ABS Trắng 2mm",
-    price: "45,000",
+    price: 45000,
     image: "/placeholder.svg",
     category: "Phụ kiện",
     rating: 4.6,
@@ -96,21 +65,66 @@ const RELATED_PRODUCTS = [
 
 export default function ProductDetail() {
   const { id } = useParams();
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const { addItem } = useCart();
+
+  useEffect(() => {
+    fetchProduct();
+  }, [id]);
+
+  const fetchProduct = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error) throw error;
+      setProduct(data);
+    } catch (error) {
+      console.error('Error fetching product:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const nextImage = () => {
-    setCurrentImageIndex((prev) => 
-      prev === MOCK_PRODUCT.images.length - 1 ? 0 : prev + 1
+    if (!product?.images?.length) return;
+    setCurrentImageIndex((prev) =>
+      prev === product.images.length - 1 ? 0 : prev + 1
     );
   };
 
   const prevImage = () => {
-    setCurrentImageIndex((prev) => 
-      prev === 0 ? MOCK_PRODUCT.images.length - 1 : prev - 1
+    if (!product?.images?.length) return;
+    setCurrentImageIndex((prev) =>
+      prev === 0 ? product.images.length - 1 : prev - 1
     );
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (!product) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>Không tìm thấy sản phẩm</p>
+      </div>
+    );
+  }
+
+  const images = product.images || ['/placeholder.svg'];
+  const specs = product.specifications || {};
 
   return (
     <div className="min-h-screen bg-background">
@@ -122,11 +136,11 @@ export default function ProductDetail() {
             <span>/</span>
             <Link to="/products" className="hover:text-primary">Sản phẩm</Link>
             <span>/</span>
-            <Link to={`/products?category=${MOCK_PRODUCT.category}`} className="hover:text-primary">
-              {MOCK_PRODUCT.category}
+            <Link to={`/products?category=${product.category}`} className="hover:text-primary">
+              {product.category}
             </Link>
             <span>/</span>
-            <span className="text-foreground">{MOCK_PRODUCT.name}</span>
+            <span className="text-foreground">{product.name}</span>
           </nav>
         </div>
       </div>
@@ -138,46 +152,49 @@ export default function ProductDetail() {
             {/* Main Image */}
             <div className="relative aspect-square bg-muted rounded-lg overflow-hidden group">
               <img
-                src={MOCK_PRODUCT.images[currentImageIndex]}
-                alt={MOCK_PRODUCT.name}
+                src={images[currentImageIndex]}
+                alt={product.name}
                 className="w-full h-full object-cover"
               />
-              
+
               {/* Navigation Arrows */}
-              <button
-                onClick={prevImage}
-                className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-              >
-                <ChevronLeft className="w-5 h-5" />
-              </button>
-              <button
-                onClick={nextImage}
-                className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-              >
-                <ChevronRight className="w-5 h-5" />
-              </button>
+              {images.length > 1 && (
+                <>
+                  <button
+                    onClick={prevImage}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={nextImage}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+                </>
+              )}
 
               {/* Image Counter */}
               <div className="absolute bottom-4 right-4 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
-                {currentImageIndex + 1} / {MOCK_PRODUCT.images.length}
+                {currentImageIndex + 1} / {images.length}
               </div>
             </div>
 
             {/* Thumbnail Images */}
             <div className="grid grid-cols-4 gap-2">
-              {MOCK_PRODUCT.images.map((image, index) => (
+              {images.map((image, index) => (
                 <button
                   key={index}
                   onClick={() => setCurrentImageIndex(index)}
-                  className={`aspect-square rounded-lg overflow-hidden border-2 transition-colors ${
-                    index === currentImageIndex 
-                      ? 'border-primary' 
-                      : 'border-transparent hover:border-muted-foreground'
-                  }`}
+                  className={`aspect-square rounded-lg overflow-hidden border-2 transition-colors ${index === currentImageIndex
+                    ? 'border-primary'
+                    : 'border-transparent hover:border-muted-foreground'
+                    }`}
                 >
                   <img
                     src={image}
-                    alt={`${MOCK_PRODUCT.name} ${index + 1}`}
+                    alt={`${product.name} ${index + 1}`}
                     className="w-full h-full object-cover"
                   />
                 </button>
@@ -190,12 +207,12 @@ export default function ProductDetail() {
             {/* Header */}
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <Badge variant="secondary">{MOCK_PRODUCT.category}</Badge>
-                <Badge variant="outline">Mã: {MOCK_PRODUCT.code}</Badge>
+                <Badge variant="secondary">{product.category}</Badge>
+                <Badge variant="outline">Mã: {product.id.slice(0, 8).toUpperCase()}</Badge>
               </div>
-              
+
               <h1 className="text-3xl font-bold text-foreground mb-4">
-                {MOCK_PRODUCT.name}
+                {product.name}
               </h1>
 
               <div className="flex items-center gap-4 mb-4">
@@ -203,17 +220,16 @@ export default function ProductDetail() {
                   {[...Array(5)].map((_, i) => (
                     <Star
                       key={i}
-                      className={`w-5 h-5 ${
-                        i < Math.floor(MOCK_PRODUCT.rating)
-                          ? 'fill-yellow-400 text-yellow-400'
-                          : 'text-muted-foreground'
-                      }`}
+                      className={`w-5 h-5 ${i < 4
+                        ? 'fill-yellow-400 text-yellow-400'
+                        : 'text-muted-foreground'
+                        }`}
                     />
                   ))}
-                  <span className="font-medium ml-2">{MOCK_PRODUCT.rating}</span>
+                  <span className="font-medium ml-2">4.5</span>
                 </div>
                 <span className="text-muted-foreground">
-                  ({MOCK_PRODUCT.reviews} đánh giá)
+                  (Đánh giá)
                 </span>
               </div>
             </div>
@@ -221,23 +237,15 @@ export default function ProductDetail() {
             {/* Price */}
             <div className="flex items-baseline gap-4">
               <span className="text-3xl font-bold text-primary">
-                {MOCK_PRODUCT.price}₫
+                {product.price.toLocaleString('vi-VN')}₫
               </span>
-              {MOCK_PRODUCT.originalPrice && (
-                <span className="text-xl text-muted-foreground line-through">
-                  {MOCK_PRODUCT.originalPrice}₫
-                </span>
-              )}
-              <Badge variant="destructive" className="text-sm">
-                Tiết kiệm {(parseInt(MOCK_PRODUCT.originalPrice?.replace(/,/g, '') || '0') - parseInt(MOCK_PRODUCT.price.replace(/,/g, ''))).toLocaleString()}₫
-              </Badge>
             </div>
 
             {/* Stock Status */}
             <div className="flex items-center gap-2">
-              <div className={`w-3 h-3 rounded-full ${MOCK_PRODUCT.inStock ? 'bg-green-500' : 'bg-red-500'}`} />
-              <span className={MOCK_PRODUCT.inStock ? 'text-green-600' : 'text-red-600'}>
-                {MOCK_PRODUCT.inStock ? 'Còn hàng' : 'Hết hàng'}
+              <div className={`w-3 h-3 rounded-full ${product.stock_quantity > 0 ? 'bg-green-500' : 'bg-red-500'}`} />
+              <span className={product.stock_quantity > 0 ? 'text-green-600' : 'text-red-600'}>
+                {product.stock_quantity > 0 ? 'Còn hàng' : 'Hết hàng'}
               </span>
             </div>
 
@@ -268,7 +276,15 @@ export default function ProductDetail() {
               </div>
 
               <div className="flex gap-3">
-                <Button size="lg" className="flex-1">
+                <Button size="lg" className="flex-1" onClick={() => {
+                  addItem({
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    image: images[0],
+                    quantity: quantity
+                  });
+                }}>
                   <ShoppingCart className="w-5 h-5 mr-2" />
                   Thêm vào giỏ hàng
                 </Button>
@@ -342,34 +358,8 @@ export default function ProductDetail() {
               <CardContent className="p-6">
                 <h3 className="text-xl font-semibold mb-4">Mô tả sản phẩm</h3>
                 <p className="text-muted-foreground mb-6 leading-relaxed">
-                  {MOCK_PRODUCT.description}
+                  {product.description}
                 </p>
-                
-                <div className="grid md:grid-cols-2 gap-8">
-                  <div>
-                    <h4 className="font-semibold mb-3">Tính năng nổi bật</h4>
-                    <ul className="space-y-2">
-                      {MOCK_PRODUCT.features.map((feature, index) => (
-                        <li key={index} className="flex items-start gap-2">
-                          <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
-                          <span className="text-sm">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  
-                  <div>
-                    <h4 className="font-semibold mb-3">Ứng dụng</h4>
-                    <ul className="space-y-2">
-                      {MOCK_PRODUCT.applications.map((app, index) => (
-                        <li key={index} className="flex items-start gap-2">
-                          <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
-                          <span className="text-sm">{app}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
               </CardContent>
             </Card>
           </TabsContent>
@@ -379,12 +369,15 @@ export default function ProductDetail() {
               <CardContent className="p-6">
                 <h3 className="text-xl font-semibold mb-4">Thông số kỹ thuật</h3>
                 <div className="grid gap-4">
-                  {Object.entries(MOCK_PRODUCT.specifications).map(([key, value]) => (
+                  {Object.entries(specs).map(([key, value]) => (
                     <div key={key} className="grid grid-cols-3 py-3 border-b border-border last:border-0">
                       <span className="font-medium">{key}</span>
-                      <span className="col-span-2 text-muted-foreground">{value}</span>
+                      <span className="col-span-2 text-muted-foreground">{String(value)}</span>
                     </div>
                   ))}
+                  {Object.keys(specs).length === 0 && (
+                    <p className="text-muted-foreground">Chưa có thông số kỹ thuật</p>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -408,15 +401,7 @@ export default function ProductDetail() {
                 <div className="space-y-3">
                   <Button variant="outline" className="w-full justify-start">
                     <Download className="w-4 h-4 mr-2" />
-                    Catalogue sản phẩm MFC (PDF)
-                  </Button>
-                  <Button variant="outline" className="w-full justify-start">
-                    <Download className="w-4 h-4 mr-2" />
-                    Thông số kỹ thuật chi tiết (PDF)
-                  </Button>
-                  <Button variant="outline" className="w-full justify-start">
-                    <Download className="w-4 h-4 mr-2" />
-                    Hướng dẫn lắp đặt (PDF)
+                    Catalogue sản phẩm (PDF)
                   </Button>
                 </div>
               </CardContent>

@@ -5,28 +5,102 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Package, 
-  Users, 
-  ShoppingCart, 
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Package,
+  Users,
+  ShoppingCart,
   BarChart3,
   Plus,
-  Settings
+  Settings,
+  Newspaper,
+  Briefcase
 } from "lucide-react";
 import { ProductForm } from "@/components/ProductForm";
+import { NewsManager } from "@/components/admin/NewsManager";
+import { ProjectsManager } from "@/components/admin/ProjectsManager";
 import { useProducts } from "@/hooks/useProducts";
+import { supabase } from "@/integrations/supabase/client";
+
+const OrdersList = () => {
+  const [orders, setOrders] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  const fetchOrders = async () => {
+    try {
+      // @ts-ignore
+      const { data, error } = await supabase
+        .from('orders')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setOrders(data || []);
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) return <div>Đang tải đơn hàng...</div>;
+
+  return (
+    <div className="space-y-4">
+      {orders.length === 0 ? (
+        <p className="text-center text-muted-foreground py-8">Chưa có đơn hàng nào</p>
+      ) : (
+        orders.map((order) => (
+          <div key={order.id} className="border rounded-lg p-4 flex justify-between items-center">
+            <div>
+              <p className="font-medium">Đơn hàng #{order.id.slice(0, 8)}</p>
+              <p className="text-sm text-muted-foreground">
+                {new Date(order.created_at).toLocaleDateString('vi-VN')} - {order.shipping_name}
+              </p>
+              <p className="text-sm">
+                Trạng thái: <Badge variant="outline">{order.status}</Badge>
+              </p>
+            </div>
+            <div className="text-right">
+              <p className="font-bold text-primary">
+                {order.total_amount.toLocaleString('vi-VN')}₫
+              </p>
+              <p className="text-xs text-muted-foreground">{order.payment_method}</p>
+            </div>
+          </div>
+        ))
+      )}
+    </div>
+  );
+};
 
 const Admin = () => {
   const { user, isAdmin, loading } = useAuth();
   const navigate = useNavigate();
-  const { products, categories } = useProducts();
-  const [showProductForm, setShowProductForm] = useState(false);
+  const { products, categories, deleteProduct } = useProducts();
+  const [isProductDialogOpen, setIsProductDialogOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<any>(null);
 
   useEffect(() => {
     if (!loading && (!user || !isAdmin)) {
       navigate("/auth");
     }
   }, [user, isAdmin, loading, navigate]);
+
+  const handleEdit = (product: any) => {
+    setEditingProduct(product);
+    setIsProductDialogOpen(true);
+  };
+
+  const handleDelete = async (id: string) => {
+    if (window.confirm('Bạn có chắc chắn muốn xóa sản phẩm này không?')) {
+      await deleteProduct(id);
+    }
+  };
 
   if (loading) {
     return (
@@ -64,7 +138,7 @@ const Admin = () => {
               </div>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -104,9 +178,11 @@ const Admin = () => {
 
         {/* Management Tabs */}
         <Tabs defaultValue="products" className="space-y-4">
-          <TabsList>
+          <TabsList className="flex flex-wrap h-auto">
             <TabsTrigger value="products">Sản phẩm</TabsTrigger>
             <TabsTrigger value="orders">Đơn hàng</TabsTrigger>
+            <TabsTrigger value="news">Tin tức</TabsTrigger>
+            <TabsTrigger value="projects">Dự án</TabsTrigger>
             <TabsTrigger value="users">Người dùng</TabsTrigger>
             <TabsTrigger value="settings">Cài đặt</TabsTrigger>
           </TabsList>
@@ -119,15 +195,31 @@ const Admin = () => {
                   Thêm, sửa, xóa và quản lý tất cả sản phẩm gỗ ép
                 </p>
               </div>
-              <Button onClick={() => setShowProductForm(!showProductForm)}>
-                <Plus className="w-4 h-4 mr-2" />
-                {showProductForm ? 'Ẩn form' : 'Thêm sản phẩm'}
-              </Button>
-            </div>
 
-            {showProductForm && (
-              <ProductForm onSuccess={() => setShowProductForm(false)} />
-            )}
+              <Dialog open={isProductDialogOpen} onOpenChange={(open) => {
+                setIsProductDialogOpen(open);
+                if (!open) setEditingProduct(null);
+              }}>
+                <DialogTrigger asChild>
+                  <Button onClick={() => setEditingProduct(null)}>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Thêm sản phẩm
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle>{editingProduct ? 'Cập nhật sản phẩm' : 'Thêm sản phẩm mới'}</DialogTitle>
+                  </DialogHeader>
+                  <ProductForm
+                    initialData={editingProduct}
+                    onSuccess={() => {
+                      setIsProductDialogOpen(false);
+                      setEditingProduct(null);
+                    }}
+                  />
+                </DialogContent>
+              </Dialog>
+            </div>
 
             <Card>
               <CardHeader>
@@ -166,10 +258,18 @@ const Admin = () => {
                           <Badge variant={product.is_active ? "default" : "secondary"}>
                             {product.is_active ? "Hoạt động" : "Tạm dừng"}
                           </Badge>
-                          <Button variant="outline" size="sm">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleEdit(product)}
+                          >
                             Sửa
                           </Button>
-                          <Button variant="destructive" size="sm">
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => handleDelete(product.id)}
+                          >
                             Xóa
                           </Button>
                         </div>
@@ -190,15 +290,17 @@ const Admin = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="text-center py-12 text-muted-foreground">
-                  <ShoppingCart className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p>Chức năng quản lý đơn hàng sẽ được triển khai ở đây</p>
-                  <p className="text-sm mt-2">
-                    Bao gồm: Xem đơn hàng, cập nhật trạng thái, in hóa đơn
-                  </p>
-                </div>
+                <OrdersList />
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="news" className="space-y-4">
+            <NewsManager />
+          </TabsContent>
+
+          <TabsContent value="projects" className="space-y-4">
+            <ProjectsManager />
           </TabsContent>
 
           <TabsContent value="users" className="space-y-4">
