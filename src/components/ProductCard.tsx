@@ -4,6 +4,7 @@ import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { Star, ShoppingCart, Heart, Eye } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useCart } from "@/hooks/useCart";
 
 interface ProductCardProps {
   id: string;
@@ -20,31 +21,46 @@ interface ProductCardProps {
   className?: string;
 }
 
-export const ProductCard = ({ 
-  id, 
-  name, 
-  image, 
-  category, 
+export const ProductCard = ({
+  id,
+  name,
+  image,
+  category,
   price,
   originalPrice,
   rating,
   reviews,
   specs,
-  isNew, 
+  isNew,
   isBestSeller,
-  className 
+  className
 }: ProductCardProps) => {
+  const { addItem } = useCart();
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent navigation if inside a Link
+    if (price) {
+      addItem({
+        id,
+        name,
+        price: parseInt(price.replace(/,/g, '')),
+        image,
+        quantity: 1
+      });
+    }
+  };
+
   return (
     <Card className={cn("group overflow-hidden hover:shadow-lg transition-all duration-300 bg-background border-border", className)}>
       <div className="relative">
         <div className="aspect-square overflow-hidden">
-          <img 
-            src={image} 
+          <img
+            src={image}
             alt={name}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
         </div>
-        
+
         {/* Badges */}
         <div className="absolute top-3 left-3 flex flex-col gap-1">
           {isNew && (
@@ -71,7 +87,11 @@ export const ProductCard = ({
             <Button size="sm" variant="secondary" className="bg-background/90 hover:bg-background">
               <Heart className="w-4 h-4" />
             </Button>
-            <Button size="sm" className="bg-primary hover:bg-primary/90">
+            <Button
+              size="sm"
+              className="bg-primary hover:bg-primary/90"
+              onClick={handleAddToCart}
+            >
               <ShoppingCart className="w-4 h-4" />
             </Button>
           </div>
@@ -87,7 +107,7 @@ export const ProductCard = ({
                 {name}
               </h3>
             </Link>
-            
+
             {/* Specs */}
             {specs && specs.length > 0 && (
               <div className="flex flex-wrap gap-1 mb-2">
@@ -106,11 +126,10 @@ export const ProductCard = ({
                   {[...Array(5)].map((_, i) => (
                     <Star
                       key={i}
-                      className={`w-3 h-3 ${
-                        i < Math.floor(rating)
+                      className={`w-3 h-3 ${i < Math.floor(rating)
                           ? 'fill-yellow-400 text-yellow-400'
                           : 'text-muted-foreground'
-                      }`}
+                        }`}
                     />
                   ))}
                 </div>
@@ -135,7 +154,11 @@ export const ProductCard = ({
                 Xem chi tiết
               </Button>
             </Link>
-            <Button size="sm" className="flex-1 text-xs">
+            <Button
+              size="sm"
+              className="flex-1 text-xs"
+              onClick={handleAddToCart}
+            >
               {price ? 'Thêm giỏ hàng' : 'Liên hệ giá'}
             </Button>
           </div>

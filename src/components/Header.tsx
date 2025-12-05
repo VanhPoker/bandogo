@@ -161,11 +161,13 @@ export const Header = () => {
             )}
 
             {/* Shopping cart */}
-            <Button variant="ghost" size="icon" className="relative">
-              <ShoppingCart className="w-5 h-5" />
-              <Badge className="absolute -top-2 -right-2 w-5 h-5 p-0 flex items-center justify-center text-xs">
-                {totalItems}
-              </Badge>
+            <Button variant="ghost" size="icon" className="relative" asChild>
+              <Link to="/cart">
+                <ShoppingCart className="w-5 h-5" />
+                <Badge className="absolute -top-2 -right-2 w-5 h-5 p-0 flex items-center justify-center text-xs">
+                  {totalItems}
+                </Badge>
+              </Link>
             </Button>
 
             {/* Mobile menu button */}

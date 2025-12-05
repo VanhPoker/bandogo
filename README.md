@@ -1,73 +1,98 @@
-# Welcome to your Lovable project
+# Bandogo - Website Bán Đồ Gỗ Nội Thất
 
-## Project info
+Dự án website thương mại điện tử chuyên cung cấp các sản phẩm gỗ nội thất, ván công nghiệp và phụ kiện mộc. Website bao gồm đầy đủ các tính năng cho người dùng mua sắm và trang quản trị cho admin.
 
-**URL**: https://lovable.dev/projects/8e87dfe2-8d54-43af-ba3f-bb9da3e6db47
+## 🚀 Công Nghệ Sử Dụng
 
-## How can I edit this code?
+- **Frontend:** React (Vite), TypeScript
+- **Styling:** Tailwind CSS, Shadcn UI
+- **State Management:** React Hooks (Context API cho Cart, Auth)
+- **Routing:** React Router DOM
+- **Backend & Database:** Supabase (PostgreSQL, Auth, Storage)
+- **Icons:** Lucide React
+- **Notifications:** Sonner
 
-There are several ways of editing your application.
+## ✨ Tính Năng Chính
 
-**Use Lovable**
+### 1. Người Dùng (Public)
+- **Trang Chủ (`/`):**
+    - Hiển thị danh mục sản phẩm nổi bật.
+    - Hiển thị sản phẩm đại diện cho từng danh mục.
+- **Sản Phẩm (`/products`):**
+    - Danh sách sản phẩm với bộ lọc theo danh mục (URL sync).
+    - Chi tiết sản phẩm: Hình ảnh, thông số kỹ thuật, mô tả, sản phẩm liên quan.
+- **Tin Tức (`/news`):**
+    - Cập nhật tin tức thị trường, xu hướng nội thất.
+- **Dự Án (`/projects`):**
+    - Showcase các dự án đã thực hiện (hình ảnh, khách hàng, ngày hoàn thành).
+- **Giỏ Hàng & Thanh Toán:**
+    - Thêm/Sửa/Xóa sản phẩm trong giỏ hàng (`/cart`).
+    - Thanh toán (`/checkout`): Hỗ trợ đặt hàng không cần đăng nhập (Guest Checkout).
+    - Lưu đơn hàng vào cơ sở dữ liệu.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/8e87dfe2-8d54-43af-ba3f-bb9da3e6db47) and start prompting.
+### 2. Quản Trị Viên (Admin) - `/admin`
+- **Quản Lý Sản Phẩm:**
+    - Xem danh sách, Thêm mới, Sửa, Xóa sản phẩm.
+    - Upload hình ảnh sản phẩm lên Supabase Storage.
+- **Quản Lý Tin Tức:**
+    - Đăng bài viết mới, chỉnh sửa nội dung.
+- **Quản Lý Dự Án:**
+    - Cập nhật thông tin dự án mới.
+- **Quản Lý Đơn Hàng:** (Đang phát triển)
 
-Changes made via Lovable will be committed automatically to this repo.
+## 🗄️ Cấu Trúc Cơ Sở Dữ Liệu (Supabase)
 
-**Use your preferred IDE**
+Dự án sử dụng các bảng sau trong PostgreSQL:
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+1.  **`categories`**: Danh mục sản phẩm (Ván MDF, MFC, Gỗ ghép...).
+2.  **`products`**: Thông tin chi tiết sản phẩm, giá, kho, thông số kỹ thuật (JSONB).
+3.  **`news`**: Bài viết tin tức.
+4.  **`projects`**: Thông tin dự án đã thực hiện.
+5.  **`orders`**: Đơn hàng (Thông tin khách hàng, tổng tiền, trạng thái).
+6.  **`order_items`**: Chi tiết sản phẩm trong đơn hàng.
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## 🛠️ Hướng Dẫn Cài Đặt
 
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+### 1. Clone dự án
+```bash
+git clone https://github.com/VanhPoker/bandogo.git
+cd bandogo
 ```
 
-**Edit a file directly in GitHub**
+### 2. Cài đặt dependencies
+```bash
+pnpm install
+```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### 3. Cấu hình môi trường
+Tạo file `.env` tại thư mục gốc và điền thông tin Supabase của bạn:
+```env
+VITE_SUPABASE_URL=your_supabase_project_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
 
-**Use GitHub Codespaces**
+### 4. Thiết lập Database
+Chạy các file SQL trong thư mục `supabase/migrations` hoặc `supabase/seed_data.sql` trên SQL Editor của Supabase để tạo bảng và dữ liệu mẫu.
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+- `supabase/migrations/20251205154500_add_news_projects.sql`: Tạo bảng News và Projects.
+- `supabase/migrations/20251205160000_add_orders.sql`: Tạo bảng Orders và Order Items.
+- `supabase/seed_data.sql`: Dữ liệu mẫu (Categories, Products, News, Projects).
 
-## What technologies are used for this project?
+### 5. Chạy dự án
+```bash
+pnpm dev
+```
+Truy cập `http://localhost:8080` để xem kết quả.
 
-This project is built with:
+## 📂 Cấu Trúc Thư Mục
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/8e87dfe2-8d54-43af-ba3f-bb9da3e6db47) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+```
+src/
+├── components/         # Các component tái sử dụng (Header, Footer, UI...)
+│   ├── admin/          # Component dành riêng cho trang Admin
+│   └── ui/             # Shadcn UI components
+├── hooks/              # Custom hooks (useCart, useAuth, useProducts...)
+├── pages/              # Các trang chính (Index, Products, Admin, Checkout...)
+├── integrations/       # Cấu hình Supabase client
+└── App.tsx             # Routing và Layout chính
+```
