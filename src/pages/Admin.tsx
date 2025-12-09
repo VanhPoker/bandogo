@@ -14,7 +14,8 @@ import {
   Plus,
   Settings,
   Newspaper,
-  Briefcase
+  Briefcase,
+  ArrowLeft
 } from "lucide-react";
 import { ProductForm } from "@/components/ProductForm";
 import { NewsManager } from "@/components/admin/NewsManager";
@@ -33,7 +34,7 @@ const OrdersList = () => {
 
   const fetchOrders = async () => {
     try {
-      // @ts-ignore
+
       const { data, error } = await supabase
         .from('orders')
         .select('*')
@@ -122,6 +123,14 @@ const Admin = () => {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
+          <Button
+            variant="ghost"
+            className="mb-4 pl-0 hover:bg-transparent hover:text-primary"
+            onClick={() => navigate('/')}
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Về trang chủ
+          </Button>
           <h1 className="text-3xl font-bold mb-2">Bảng điều khiển Admin</h1>
           <p className="text-muted-foreground">Quản lý website và sản phẩm</p>
         </div>
@@ -300,25 +309,46 @@ const Admin = () => {
             <NewsManager />
           </TabsContent>
 
-          <CardTitle>Cài đặt hệ thống</CardTitle>
-          <CardDescription>
-            Cấu hình các thông số của website
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="text-center py-12 text-muted-foreground">
-            <Settings className="h-12 w-12 mx-auto mb-4 opacity-50" />
-            <p>Chức năng cài đặt hệ thống sẽ được triển khai ở đây</p>
-            <p className="text-sm mt-2">
-              Bao gồm: Thông tin công ty, logo, thông tin liên hệ, SEO
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-    </TabsContent>
-        </Tabs >
-      </div >
-    </div >
+          <TabsContent value="projects" className="space-y-4">
+            <ProjectsManager />
+          </TabsContent>
+
+          <TabsContent value="users" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Quản lý người dùng</CardTitle>
+                <CardDescription>
+                  Quản lý tài khoản người dùng và phân quyền
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <UsersManager />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="settings" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Cài đặt hệ thống</CardTitle>
+                <CardDescription>
+                  Cấu hình các thông số của website
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-12 text-muted-foreground">
+                  <Settings className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                  <p>Chức năng cài đặt hệ thống sẽ được triển khai ở đây</p>
+                  <p className="text-sm mt-2">
+                    Bao gồm: Thông tin công ty, logo, thông tin liên hệ, SEO
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </div>
   );
 };
 

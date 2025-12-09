@@ -74,13 +74,12 @@ export const UsersManager = () => {
             setUsers(mergedUsers);
         } catch (error) {
             console.error('Error fetching users:', error);
-            toast.error("Không thể tải danh sách người dùng");
-        } finally {
-            setLoading(false);
+            console.error('Error updating role:', error);
+            toast.error("Lỗi khi cập nhật quyền");
         }
     };
 
-    const handleUpdateRole = async (userId: string, newRole: string) => {
+    const handleUpdateRole = async (userId: string, newRole: "user" | "admin") => {
         try {
             // Check if role entry exists
             const { data: existingRole } = await supabase
