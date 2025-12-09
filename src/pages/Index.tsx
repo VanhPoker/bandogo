@@ -6,6 +6,7 @@ import { CategoryCard } from "@/components/CategoryCard";
 import { ArrowRight, Star, Shield, Truck, Award } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useProducts } from "@/hooks/useProducts";
+import { ProductionProcess } from "@/components/ProductionProcess";
 
 const Index = () => {
   const { products, loading } = useProducts();
@@ -124,6 +125,9 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* Production Process Section */}
+      <ProductionProcess />
 
       {/* Categories/Products Section */}
       <section className="py-16">
