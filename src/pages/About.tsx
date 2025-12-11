@@ -1,13 +1,13 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { 
-  Users, 
-  Award, 
-  Factory, 
-  Leaf, 
-  Target, 
-  Eye, 
+import {
+  Users,
+  Award,
+  Factory,
+  Leaf,
+  Target,
+  Eye,
   Heart,
   ArrowRight,
   CheckCircle,
@@ -69,10 +69,10 @@ export default function About() {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              Về Gỗ Ép Premium
+              Về Mộc Tinh Hoa
             </h1>
             <p className="text-xl opacity-90 mb-8 leading-relaxed">
-              Với hơn 13 năm kinh nghiệm, chúng tôi tự hào là đơn vị tiên phong trong lĩnh vực 
+              Với hơn 13 năm kinh nghiệm, chúng tôi tự hào là đơn vị tiên phong trong lĩnh vực
               cung cấp và phân phối các sản phẩm gỗ ép chất lượng cao tại Việt Nam.
             </p>
             <Button size="lg" variant="secondary">
@@ -109,8 +109,8 @@ export default function About() {
               </div>
               <h2 className="text-3xl font-bold mb-6">Sứ mệnh</h2>
               <p className="text-muted-foreground text-lg leading-relaxed mb-6">
-                Cung cấp các sản phẩm gỗ ép chất lượng cao, an toàn và thân thiện với môi trường, 
-                đáp ứng mọi nhu cầu của khách hàng từ dân dụng đến công nghiệp. Chúng tôi cam kết 
+                Cung cấp các sản phẩm gỗ ép chất lượng cao, an toàn và thân thiện với môi trường,
+                đáp ứng mọi nhu cầu của khách hàng từ dân dụng đến công nghiệp. Chúng tôi cam kết
                 mang đến giải pháp tối ưu cho mọi công trình xây dựng và nội thất.
               </p>
               <div className="space-y-3">
@@ -128,15 +128,15 @@ export default function About() {
                 </div>
               </div>
             </div>
-            
+
             <div>
               <div className="w-16 h-16 bg-gradient-primary rounded-lg flex items-center justify-center mb-6">
                 <Eye className="w-8 h-8 text-white" />
               </div>
               <h2 className="text-3xl font-bold mb-6">Tầm nhìn</h2>
               <p className="text-muted-foreground text-lg leading-relaxed mb-6">
-                Trở thành nhà cung cấp gỗ ép hàng đầu tại Việt Nam và khu vực Đông Nam Á, 
-                được khách hàng tin tưởng và lựa chọn nhờ chất lượng sản phẩm vượt trội 
+                Trở thành nhà cung cấp gỗ ép hàng đầu tại Việt Nam và khu vực Đông Nam Á,
+                được khách hàng tin tưởng và lựa chọn nhờ chất lượng sản phẩm vượt trội
                 và dịch vụ hoàn hảo.
               </p>
               <div className="space-y-3">
@@ -167,7 +167,7 @@ export default function About() {
               Những giá trị cốt lõi định hướng mọi hoạt động và quyết định của chúng tôi
             </p>
           </div>
-          
+
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {VALUES.map((value, index) => (
               <Card key={index} className="text-center hover:shadow-lg transition-shadow">
@@ -198,11 +198,10 @@ export default function About() {
             <div className="relative">
               {/* Timeline line */}
               <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-border"></div>
-              
+
               {MILESTONES.map((milestone, index) => (
-                <div key={index} className={`relative flex items-center mb-12 ${
-                  index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'
-                }`}>
+                <div key={index} className={`relative flex items-center mb-12 ${index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'
+                  }`}>
                   <div className={`w-1/2 ${index % 2 === 0 ? 'pr-8 text-right' : 'pl-8'}`}>
                     <Card className="hover:shadow-lg transition-shadow">
                       <CardContent className="p-6">
@@ -214,10 +213,10 @@ export default function About() {
                       </CardContent>
                     </Card>
                   </div>
-                  
+
                   {/* Timeline dot */}
                   <div className="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 bg-primary rounded-full border-4 border-background"></div>
-                  
+
                   <div className="w-1/2"></div>
                 </div>
               ))}
@@ -258,7 +257,7 @@ export default function About() {
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">Tại sao chọn chúng tôi?</h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Những lợi ích vượt trội khi làm việc với Gỗ Ép Premium
+              Những lợi ích vượt trội khi làm việc với Mộc Tinh Hoa
             </p>
           </div>
 

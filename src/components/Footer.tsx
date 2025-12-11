@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
-import { 
-  MapPin, 
-  Phone, 
-  Mail, 
-  Facebook, 
-  Instagram, 
+import {
+  MapPin,
+  Phone,
+  Mail,
+  Facebook,
+  Instagram,
   Youtube,
   Clock
 } from "lucide-react";
@@ -19,16 +19,14 @@ export const Footer = () => {
           {/* Company info */}
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-wood rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">G</span>
-              </div>
+              <img src="/moctinhhoa.png" alt="Mộc Tinh Hoa" className="h-10 w-auto object-contain" />
               <div>
-                <h3 className="text-lg font-bold text-foreground">Gỗ Ép Premium</h3>
+                <h3 className="text-lg font-bold text-foreground">Mộc Tinh Hoa</h3>
                 <p className="text-xs text-muted-foreground">Chất lượng - Uy tín - Bền vững</p>
               </div>
             </div>
             <p className="text-muted-foreground text-sm">
-              Chuyên cung cấp các loại gỗ ép cao cấp cho nội thất và xây dựng. 
+              Chuyên cung cấp các loại gỗ ép cao cấp cho nội thất và xây dựng.
               Cam kết chất lượng tốt nhất với giá cả hợp lý.
             </p>
             <div className="flex items-center gap-3">
@@ -106,7 +104,7 @@ export const Footer = () => {
               </div>
               <div className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-primary flex-shrink-0" />
-                <p className="text-muted-foreground text-sm">info@goep.com</p>
+                <p className="text-muted-foreground text-sm">info@moctinhhoa.com</p>
               </div>
               <div className="flex items-start gap-3">
                 <Clock className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
@@ -123,7 +121,7 @@ export const Footer = () => {
         <div className="border-t border-border/50 mt-8 pt-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-muted-foreground text-sm">
-              © {currentYear} Gỗ Ép Premium. Tất cả quyền được bảo lưu.
+              © {currentYear} Mộc Tinh Hoa. Tất cả quyền được bảo lưu.
             </p>
             <div className="flex items-center gap-6 text-sm">
               <Link to="/privacy" className="text-muted-foreground hover:text-primary transition-colors">

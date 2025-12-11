@@ -5,10 +5,10 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { 
-  MapPin, 
-  Phone, 
-  Mail, 
+import {
+  MapPin,
+  Phone,
+  Mail,
   Clock,
   Send,
   MessageSquare,
@@ -21,7 +21,7 @@ const LOCATIONS = [
     name: "Trụ sở chính - TP.HCM",
     address: "123 Đường Nguyễn Văn Linh, Quận 7, TP. Hồ Chí Minh",
     phone: "028 3123 4567",
-    email: "info@goep.com",
+    email: "info@moctinhhoa.com",
     hours: "T2-T7: 8:00 - 17:30, CN: 8:00 - 12:00",
     type: "headquarters"
   },
@@ -29,7 +29,7 @@ const LOCATIONS = [
     name: "Chi nhánh Hà Nội",
     address: "456 Đường Giải Phóng, Quận Hai Bà Trưng, Hà Nội",
     phone: "024 3987 6543",
-    email: "hanoi@goep.com",
+    email: "hanoi@moctinhhoa.com",
     hours: "T2-T7: 8:00 - 17:30, CN: 8:00 - 12:00",
     type: "branch"
   },
@@ -37,7 +37,7 @@ const LOCATIONS = [
     name: "Showroom Đà Nẵng",
     address: "789 Đường Nguyễn Tất Thành, Quận Liên Chiểu, Đà Nẵng",
     phone: "0236 3456 789",
-    email: "danang@goep.com",
+    email: "danang@moctinhhoa.com",
     hours: "T2-T7: 8:00 - 17:30, CN: 8:00 - 12:00",
     type: "showroom"
   }
@@ -82,7 +82,7 @@ export default function Contact() {
               Liên hệ với chúng tôi
             </h1>
             <p className="text-xl opacity-90 mb-8">
-              Đội ngũ chuyên gia của chúng tôi luôn sẵn sàng hỗ trợ bạn 24/7. 
+              Đội ngũ chuyên gia của chúng tôi luôn sẵn sàng hỗ trợ bạn 24/7.
               Hãy để lại thông tin, chúng tôi sẽ liên hệ trong thời gian sớm nhất.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
@@ -92,7 +92,7 @@ export default function Contact() {
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="w-5 h-5" />
-                <span className="font-medium">info@goep.com</span>
+                <span className="font-medium">info@moctinhhoa.com</span>
               </div>
             </div>
           </div>
@@ -222,14 +222,14 @@ export default function Contact() {
                     <p className="text-sm text-muted-foreground">1900 1234</p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
                   <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
                     <Mail className="w-5 h-5 text-primary" />
                   </div>
                   <div>
                     <p className="font-medium">Email hỗ trợ</p>
-                    <p className="text-sm text-muted-foreground">support@goep.com</p>
+                    <p className="text-sm text-muted-foreground">support@moctinhhoa.com</p>
                   </div>
                 </div>
 
@@ -301,17 +301,17 @@ export default function Contact() {
                       <MapPin className="w-4 h-4 text-muted-foreground mt-1 flex-shrink-0" />
                       <p className="text-sm">{location.address}</p>
                     </div>
-                    
+
                     <div className="flex items-center gap-3">
                       <Phone className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                       <p className="text-sm font-medium">{location.phone}</p>
                     </div>
-                    
+
                     <div className="flex items-center gap-3">
                       <Mail className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                       <p className="text-sm">{location.email}</p>
                     </div>
-                    
+
                     <div className="flex items-start gap-3">
                       <Clock className="w-4 h-4 text-muted-foreground mt-1 flex-shrink-0" />
                       <p className="text-sm">{location.hours}</p>

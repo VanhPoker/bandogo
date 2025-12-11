@@ -1,24 +1,34 @@
 import { useEffect, useState } from "react";
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import {
-    Bar,
-    BarChart,
-    ResponsiveContainer,
-    XAxis,
-    YAxis,
-    Tooltip,
-    CartesianGrid,
-} from "recharts";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
+import {
+    ChartConfig,
+    ChartContainer,
+    ChartTooltip,
+    ChartTooltipContent,
+} from "@/components/ui/chart";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2 } from "lucide-react";
-import { startOfDay, subDays, format, parseISO } from "date-fns";
+import { Loader2, TrendingUp } from "lucide-react";
+import { subDays, format, parseISO } from "date-fns";
 import { vi } from "date-fns/locale";
 
 interface RevenueData {
-    date: string;
-    total: number;
-    count: number;
+    month: string; // Using 'month' to match user's snippet key, though it represents date
+    revenue: number;
 }
+
+const chartConfig = {
+    revenue: {
+        label: "Doanh thu",
+        color: "hsl(var(--primary))",
+    },
+} satisfies ChartConfig;
 
 export function RevenueChart() {
     const [data, setData] = useState<RevenueData[]>([]);
@@ -43,13 +53,13 @@ export function RevenueChart() {
             if (error) throw error;
 
             // Group by date
-            const groupedData = new Map<string, { total: number; count: number }>();
+            const groupedData = new Map<string, number>();
 
             // Initialize last 30 days with 0
             for (let i = 29; i >= 0; i--) {
                 const date = subDays(today, i);
                 const dateStr = format(date, "dd/MM", { locale: vi });
-                groupedData.set(dateStr, { total: 0, count: 0 });
+                groupedData.set(dateStr, 0);
             }
 
             orders?.forEach((order) => {
@@ -57,19 +67,14 @@ export function RevenueChart() {
                 const dateStr = format(date, "dd/MM", { locale: vi });
 
                 if (groupedData.has(dateStr)) {
-                    const current = groupedData.get(dateStr)!;
-                    groupedData.set(dateStr, {
-                        total: current.total + Number(order.total_amount),
-                        count: current.count + 1,
-                    });
+                    groupedData.set(dateStr, groupedData.get(dateStr)! + Number(order.total_amount));
                 }
             });
 
             const chartData: RevenueData[] = Array.from(groupedData.entries()).map(
-                ([date, is]) => ({
-                    date,
-                    total: is.total,
-                    count: is.count,
+                ([date, total]) => ({
+                    month: date,
+                    revenue: total,
                 })
             );
 
@@ -85,53 +90,70 @@ export function RevenueChart() {
 
     if (loading) {
         return (
-            <div className="flex justify-center items-center h-[350px]">
+            <Card className="col-span-4 min-h-[350px] flex items-center justify-center">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            </div>
+            </Card>
         );
     }
 
     return (
-        <Card className="col-span-4">
+        <Card>
             <CardHeader>
-                <CardTitle>Doanh thu 30 ngày qua</CardTitle>
+                <CardTitle>Biểu đồ doanh thu</CardTitle>
                 <CardDescription>
-                    Tổng doanh thu: {totalRevenue.toLocaleString("vi-VN")}₫
+                    Tổng doanh thu trong 30 ngày qua
                 </CardDescription>
             </CardHeader>
-            <CardContent className="pl-2">
-                <div className="h-[350px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={data}>
-                            <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                            <XAxis
-                                dataKey="date"
-                                stroke="#888888"
-                                fontSize={12}
-                                tickLine={false}
-                                axisLine={false}
-                            />
-                            <YAxis
-                                stroke="#888888"
-                                fontSize={12}
-                                tickLine={false}
-                                axisLine={false}
-                                tickFormatter={(value) => `${(value / 1000000).toFixed(1)}M`}
-                            />
-                            <Tooltip
-                                formatter={(value: number) => [`${value.toLocaleString("vi-VN")}₫`, "Doanh thu"]}
-                                labelStyle={{ color: "black" }}
-                            />
-                            <Bar
-                                dataKey="total"
-                                fill="currentColor"
-                                radius={[4, 4, 0, 0]}
-                                className="fill-primary"
-                            />
-                        </BarChart>
-                    </ResponsiveContainer>
+            <CardContent>
+                <div className="mb-4">
+                    <p className="text-2xl font-bold text-primary">
+                        {totalRevenue.toLocaleString("vi-VN")}₫
+                    </p>
                 </div>
+                <ChartContainer config={chartConfig} className="aspect-auto h-[300px] w-full">
+                    <AreaChart
+                        accessibilityLayer
+                        data={data}
+                        margin={{
+                            left: 12,
+                            right: 12,
+                            top: 12,
+                        }}
+                    >
+                        <CartesianGrid vertical={false} />
+                        <XAxis
+                            dataKey="month"
+                            tickLine={false}
+                            axisLine={false}
+                            tickMargin={8}
+                        />
+                        <ChartTooltip
+                            cursor={false}
+                            content={<ChartTooltipContent indicator="line" />}
+                        />
+                        <Area
+                            dataKey="revenue"
+                            type="natural"
+                            fill="var(--color-revenue)"
+                            fillOpacity={0.4}
+                            stroke="var(--color-revenue)"
+                        />
+                    </AreaChart>
+                </ChartContainer>
             </CardContent>
+            {/* Disabled TrendingUp footer as we don't calculate % growth yet, keeping layout simple */}
+            {/* <CardFooter>
+                <div className="flex w-full items-start gap-2 text-sm">
+                  <div className="grid gap-2">
+                    <div className="flex items-center gap-2 leading-none font-medium">
+                      Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+                    </div>
+                    <div className="text-muted-foreground flex items-center gap-2 leading-none">
+                      January - June 2024
+                    </div>
+                  </div>
+                </div>
+            </CardFooter> */}
         </Card>
     );
 }

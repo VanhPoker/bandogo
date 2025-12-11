@@ -70,7 +70,7 @@ export const Header = () => {
               </div>
               <div className="flex items-center gap-2 text-muted-foreground">
                 <Mail className="w-4 h-4" />
-                <span>info@goep.com</span>
+                <span>info@moctinhhoa.com</span>
               </div>
             </div>
             <div className="hidden md:flex items-center gap-4">
@@ -98,11 +98,9 @@ export const Header = () => {
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-wood rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">G</span>
-            </div>
+            <img src="/moctinhhoa.png" alt="Mộc Tinh Hoa" className="h-12 w-auto object-contain" />
             <div className="hidden sm:block">
-              <h1 className="text-xl font-bold text-foreground">Gỗ Ép Premium</h1>
+              <h1 className="text-xl font-bold text-foreground">Mộc Tinh Hoa</h1>
               <p className="text-xs text-muted-foreground">Chất lượng - Uy tín - Bền vững</p>
             </div>
           </Link>
