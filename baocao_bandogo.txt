@@ -1,0 +1,111 @@
+BÁO CÁO DỰ ÁN WEB BÁN GỖ ÉP (BANDOGO)
+
+PHẦN I: MỞ ĐẦU
+1. Tên đề tài: Xây dựng website thương mại điện tử kinh doanh gỗ ép công nghiệp (Bandogo).
+2. Mục đích và yêu cầu:
+   - Xây dựng website bán hàng trực tuyến chuyên nghiệp cho các sản phẩm gỗ (MFC, MDF, Plywood).
+   - Cung cấp thông tin chi tiết về sản phẩm, dự án và quy trình sản xuất.
+   - Hỗ trợ khách hàng đặt hàng, theo dõi đơn hàng và liên hệ tư vấn.
+   - Giao diện hiện đại, tối ưu trải nghiệm người dùng (UX/UI), tốc độ tải trang nhanh.
+
+PHẦN II: CÔNG NGHỆ SỬ DỤNG (TECH STACK)
+1. Frontend & Framework:
+   - React (v18.3.1): Thư viện xây dựng giao diện người dùng.
+   - Vite (v5.4.19): Công cụ build tool thế hệ mới, tốc độ cao.
+   - TypeScript: Ngôn ngữ lập trình giúp code an toàn và dễ bảo trì.
+   - React Router DOM (v6): Quản lý định tuyến trang (Routing).
+
+2. Giao diện & Stylings:
+   - Tailwind CSS (v3.4): Framework CSS utility-first để thiết kế giao diện nhanh chóng.
+   - Shadcn UI: Bộ thư viện component UI hiện đại, tái sử dụng cao.
+   - Lucide React: Bộ icon phong phú và nhẹ.
+   - Class Variance Authority (CVA) & Tailwind Merge: Quản lý class CSS động.
+
+3. Backend & Database (BaaS):
+   - Supabase: Nền tảng Backend-as-a-Service thay thế Firebase.
+   - PostgreSQL: Hệ quản trị cơ sở dữ liệu quan hệ mạnh mẽ.
+   - Supabase Auth: Quản lý xác thực người dùng (Đăng ký, Đăng nhập, Phân quyền).
+   - Supabase Storage: Lưu trữ hình ảnh sản phẩm, avatar.
+
+4. Quản lý trạng thái & Form:
+   - React Hook Form + Zod: Quản lý form và validate dữ liệu mạnh mẽ.
+   - TanStack Query (React Query): Quản lý server state, caching dữ liệu API.
+   - Context API: Quản lý trạng thái toàn cục (AuthContext, CartContext).
+
+PHẦN III: DANH SÁCH USE CASE & ĐẶC TẢ CHỨC NĂNG
+
+A. Nhóm chức năng phía Người dùng (Client - Guest/Customer)
+1. Xem thông tin website (Home)
+   - Xem banner, giới thiệu, quy trình sản xuất (Video).
+   - Xem danh sách sản phẩm nổi bật, tin tức mới nhất.
+2. Quản lý tài khoản
+   - Đăng ký (Sign Up): Tạo tài khoản mới với Email/Password.
+   - Đăng nhập (Sign In): Truy cập hệ thống.
+   - Đăng xuất (Log Out).
+   - Cập nhật thông tin cá nhân (Update Profile): Tên, Avatar, Số điện thoại.
+3. Xem sản phẩm (Products)
+   - Xem danh sách tất cả sản phẩm.
+   - Lọc sản phẩm theo danh mục (Categories).
+   - Tìm kiếm sản phẩm (Search).
+   - Xem chi tiết sản phẩm (Product Detail): Giá, Mô tả, Thông số kỹ thuật, Ảnh.
+4. Mua hàng & Giỏ hàng (Cart & Order)
+   - Thêm sản phẩm vào giỏ hàng (Add to Cart).
+   - Xem giỏ hàng, cập nhật số lượng, xóa sản phẩm.
+   - Thanh toán (Checkout): Nhập thông tin giao hàng, chọn phương thức thanh toán.
+   - Đặt hàng thành công (Place Order).
+   - Xem lịch sử đơn hàng (My Orders).
+5. Thông tin & Liên hệ
+   - Xem tin tức/Bài viết (News).
+   - Xem các dự án đã thực hiện (Projects).
+   - Gửi liên hệ/Yêu cầu tư vấn (Contact Form).
+
+B. Nhóm chức năng phía Quản trị viên (Admin)
+1. Dashboard (Thống kê)
+   - Xem tổng quan số lượng sản phẩm, đơn hàng, người dùng, doanh thu.
+2. Quản lý sản phẩm (Product Management)
+   - Xem danh sách sản phẩm.
+   - Thêm mới sản phẩm (Tên, giá, ảnh, thông số...).
+   - Chỉnh sửa thông tin sản phẩm.
+   - Xóa sản phẩm.
+3. Quản lý đơn hàng (Order Management)
+   - Xem danh sách tất cả đơn hàng từ khách hàng.
+   - Xem chi tiết đơn hàng (Sản phẩm, tổng tiền, người mua).
+   - Cập nhật trạng thái đơn hàng (Đang xử lý, Đã giao, Hủy).
+4. Quản lý tin tức (News Management)
+   - CRUD (Thêm, Sửa, Xóa) các bài viết tin tức.
+5. Quản lý dự án (Project Management)
+   - CRUD các dự án mẫu.
+6. Quản lý người dùng (User Management)
+   - Xem danh sách người dùng đã đăng ký.
+   - Phân quyền (Role-based access).
+
+PHẦN IV: PHÂN RÃ USE CASE & THIẾT KẾ HỆ THỐNG
+
+1. Phân rã Use Case "Đặt hàng" (Checkout Process):
+   - Bước 1 (Người dùng): Chọn sản phẩm -> Thêm vào giỏ -> Nhấn "Thanh toán".
+   - Bước 2 (Hệ thống): Kiểm tra tồn kho -> Hiển thị form thông tin giao hàng.
+   - Bước 3 (Người dùng): Điền địa chỉ nhận hàng, chọn Payment Method -> Confirm.
+   - Bước 4 (Hệ thống): Tạo bản ghi 'orders' trong DB -> Tạo các bản ghi 'order_items' -> Reset giỏ hàng -> Thông báo thành công.
+
+2. Phân rã Use Case "Quản lý sản phẩm" (Admin):
+   - Admin đăng nhập -> Vào trang Admin -> Tab "Sản phẩm".
+   - Hệ thống tải danh sách từ bảng 'products' thông qua Supabase Client.
+   - Admin chọn "Thêm mới" -> Điền Form (ProductForm) -> Upload ảnh lên Storage -> Submit.
+   - Hệ thống Validate (Zod) -> Insert vào DB -> Trả về kết quả -> Cập nhật UI.
+
+PHẦN V: KIẾN TRÚC & CẤU TRÚC DỰ ÁN
+- src/components: Chứa các UI components tái sử dụng (Button, Card, Header, Footer...).
+- src/pages: Chứa các trang chính (Index, Products, Admin, Cart...).
+- src/hooks: Các Custom Hooks (useAuth, useCart, useProducts) để tách biệt logic.
+- src/lib: Các tiện ích xử lý (utilsClass, format currency).
+- src/integrations/supabase: Cấu hình và Type definitions cho Supabase.
+
+PHẦN VI: THUẬT TOÁN ĐIỂN HÌNH
+- Lọc & Tìm kiếm: Sử dụng query filter của Supabase (Postgrest) kết hợp state client-side.
+- Phân quyền (Authorization): Sử dụng RLS (Row Level Security) ở Database PostgreSQL kết hợp với Auth Context ở Frontend (kiểm tra bảng `user_roles`).
+- Validation: Sử dụng Zod schema để đảm bảo dữ liệu đầu vào chính xác trước khi gửi đi.
+
+PHẦN VII: KẾT LUẬN
+- Dự án đã hoàn thiện các chức năng cơ bản của một sàn TMĐT.
+- Sử dụng công nghệ hiện đại, dễ dàng mở rộng và bảo trì.
+- Giao diện thân thiện, đáp ứng tốt trên nhiều thiết bị (Responsive).

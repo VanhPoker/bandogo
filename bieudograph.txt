@@ -1,0 +1,171 @@
+1. Biểu đồ Use Case Tổng quan (System Overview)
+Đây là bức tranh toàn cảnh, thể hiện tất cả quyền hạn của Khách hàng và Admin trên hệ thống.
+
+
+Đoạn mã
+
+graph LR
+    %% Định nghĩa Tác nhân
+    Guest["👤 Khách hàng<br/>(Guest/Customer)"]
+    Admin["👮 Quản trị viên<br/>(Admin)"]
+
+    subgraph "Hệ thống Website Bandogo"
+        %% Nhóm chức năng chung/Khách hàng
+        UC_Reg(["Đăng ký tài khoản"])
+        UC_Login(["Đăng nhập hệ thống"])
+        UC_Search(["Tìm kiếm & Lọc gỗ"])
+        UC_View(["Xem chi tiết sản phẩm"])
+        UC_Cart(["Quản lý giỏ hàng & Mua"])
+        UC_News(["Xem Tin tức & Dự án"])
+        UC_Contact(["Gửi liên hệ/Tư vấn"])
+
+        %% Nhóm chức năng Admin
+        UC_Prod(["Quản lý Sản phẩm"])
+        UC_Order(["Quản lý Đơn hàng"])
+        UC_User(["Quản lý Người dùng"])
+        UC_Dash(["Xem Báo cáo (Dashboard)"])
+    end
+
+    %% Kết nối Khách hàng
+    Guest --> UC_Reg
+    Guest --> UC_Login
+    Guest --> UC_Search
+    Guest --> UC_View
+    Guest --> UC_Cart
+    Guest --> UC_News
+    Guest --> UC_Contact
+
+    %% Kết nối Admin
+    Admin --> UC_Login
+    Admin --> UC_Prod
+    Admin --> UC_Order
+    Admin --> UC_User
+    Admin --> UC_Dash
+
+    %% Style
+    style Guest fill:#fff,stroke:#333,stroke-width:2px
+    style Admin fill:#fff,stroke:#333,stroke-width:2px
+    style UC_Login fill:#ffcc80
+2. Phân rã: Chức năng Tài khoản (Đăng ký/Đăng nhập)
+Chi tiết hóa việc tạo tài khoản, cập nhật hồ sơ (Avatar, SĐT) và xem lịch sử.
+
+Đoạn mã
+
+graph LR
+    User["👤 Khách hàng"]
+
+    subgraph "Quản lý Tài khoản"
+        UC_Reg(["Đăng ký (Email/Pass)"])
+        UC_Login(["Đăng nhập"])
+        UC_Profile(["Cập nhật hồ sơ<br/>(Avatar, SĐT)"])
+        UC_History(["Xem lịch sử đơn hàng"])
+    end
+
+    User --> UC_Reg
+    User --> UC_Login
+    
+    %% Phải đăng nhập mới làm được 2 cái kia
+    UC_Login -.->|mở khóa| UC_Profile
+    UC_Login -.->|mở khóa| UC_History
+
+    style User fill:#fff,stroke:#333
+    style UC_Login fill:#b3e5fc
+3. Phân rã: Chức năng Tìm kiếm & Mua hàng (Client)
+Mô tả hành trình từ lúc tìm gỗ (MFC, MDF...) đến khi thanh toán xong.
+
+
+Đoạn mã
+
+graph LR
+    User["👤 Khách hàng"]
+
+    subgraph "Quy trình Mua sắm"
+        direction TB
+        UC_Search(["Tìm kiếm theo tên"])
+        UC_Filter(["Lọc theo danh mục"])
+        UC_Detail(["Xem chi tiết<br/>(Giá/Ảnh/Thông số)"])
+        
+        UC_AddCart(["Thêm vào giỏ"])
+        UC_Update(["Cập nhật số lượng"])
+        UC_Checkout(["Thanh toán (Checkout)"])
+    end
+
+    User --> UC_Search
+    User --> UC_Filter
+    User --> UC_Detail
+    User --> UC_AddCart
+    User --> UC_Checkout
+
+    %% Quan hệ
+    UC_Search -.->|dẫn đến| UC_Detail
+    UC_Filter -.->|dẫn đến| UC_Detail
+    UC_Detail -.->|chọn mua| UC_AddCart
+    UC_AddCart -.->|chỉnh sửa| UC_Update
+
+    style User fill:#fff,stroke:#333
+    style UC_Checkout fill:#c8e6c9
+4. Phân rã: Chức năng Quản trị (Admin Management)
+Chi tiết các quyền lực của Admin: Quản lý gỗ, đơn hàng, người dùng và xem thống kê.
+
+
+
+Đoạn mã
+
+graph LR
+    Admin["👮 Admin"]
+
+    subgraph "Khu vực Quản trị"
+        UC_Dash(["Dashboard<br/>(Thống kê Doanh thu/SL)"])
+        
+        %% Quản lý Sản phẩm
+        UC_AddP(["Thêm sản phẩm"])
+        UC_EditP(["Sửa (Tên/Giá/Ảnh)"])
+        UC_DelP(["Xóa sản phẩm"])
+        
+        %% Quản lý Đơn hàng
+        UC_ListO(["Xem DS Đơn hàng"])
+        UC_DetailO(["Xem chi tiết đơn"])
+        UC_StatusO(["Cập nhật trạng thái<br/>(Xử lý/Giao/Hủy)"])
+        
+        %% Quản lý User
+        UC_ListU(["Xem DS Người dùng"])
+        UC_Role(["Phân quyền truy cập"])
+    end
+
+    Admin --> UC_Dash
+    
+    Admin --> UC_AddP
+    Admin --> UC_EditP
+    Admin --> UC_DelP
+    
+    Admin --> UC_ListO
+    UC_ListO -.-> UC_DetailO
+    UC_ListO -.-> UC_StatusO
+    
+    Admin --> UC_ListU
+    UC_ListU -.-> UC_Role
+
+    style Admin fill:#fff,stroke:#333
+    style UC_Dash fill:#e1bee7
+5. Phân rã: Chức năng Tin tức & Liên hệ
+Mô tả phần thông tin bổ trợ giúp khách hàng tin tưởng và liên hệ với xưởng.
+
+Đoạn mã
+
+graph LR
+    User["👤 Khách hàng"]
+
+    subgraph "Thông tin & Hỗ trợ"
+        UC_News(["Xem Tin tức"])
+        UC_Project(["Xem Dự án mẫu"])
+        UC_Contact(["Gửi Form liên hệ"])
+        UC_Consult(["Yêu cầu tư vấn"])
+    end
+
+    User --> UC_News
+    User --> UC_Project
+    User --> UC_Contact
+    User --> UC_Consult
+
+    style User fill:#fff,stroke:#333
+    style UC_Contact fill:#ffccbc

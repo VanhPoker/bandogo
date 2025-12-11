@@ -76,6 +76,8 @@ export const UsersManager = () => {
             console.error('Error fetching users:', error);
             console.error('Error updating role:', error);
             toast.error("Lỗi khi cập nhật quyền");
+        } finally {
+            setLoading(false);
         }
     };
 

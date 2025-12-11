@@ -256,6 +256,56 @@ export const Header = () => {
                 </div>
               ))}
             </nav>
+
+            <div className="border-t border-border pt-4 mt-4 space-y-2">
+              {user ? (
+                <>
+                  <div className="flex items-center gap-2 px-2 py-2 text-sm text-muted-foreground">
+                    <User className="w-4 h-4" />
+                    <span>Xin chào, {profile?.display_name || user.email}</span>
+                  </div>
+
+                  {isAdmin && (
+                    <Link
+                      to="/admin"
+                      className="block px-2 py-2 text-foreground hover:text-primary transition-colors flex items-center gap-2"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <Settings className="w-4 h-4" />
+                      Quản lý hệ thống
+                    </Link>
+                  )}
+
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      setIsMenuOpen(false);
+                    }}
+                    className="w-full text-left px-2 py-2 text-destructive hover:bg-destructive/10 transition-colors rounded-md flex items-center gap-2"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Đăng xuất
+                  </button>
+                </>
+              ) : (
+                <div className="grid grid-cols-2 gap-4 px-2">
+                  <Link
+                    to="/auth"
+                    className="flex items-center justify-center py-2 text-foreground hover:text-primary border border-border rounded-md transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Đăng nhập
+                  </Link>
+                  <Link
+                    to="/auth"
+                    className="flex items-center justify-center py-2 bg-primary text-primary-foreground hover:bg-primary/90 rounded-md transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Đăng ký
+                  </Link>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}

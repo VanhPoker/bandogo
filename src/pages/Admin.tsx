@@ -21,6 +21,7 @@ import { ProductForm } from "@/components/ProductForm";
 import { NewsManager } from "@/components/admin/NewsManager";
 import { ProjectsManager } from "@/components/admin/ProjectsManager";
 import { UsersManager } from "@/components/admin/UsersManager";
+import { RevenueChart } from "@/components/admin/RevenueChart";
 import { useProducts } from "@/hooks/useProducts";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -184,6 +185,11 @@ const Admin = () => {
               </div>
             </CardContent>
           </Card>
+        </div>
+
+        {/* Revenue Chart */}
+        <div className="mb-8">
+          <RevenueChart />
         </div>
 
         {/* Management Tabs */}
