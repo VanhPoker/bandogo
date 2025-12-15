@@ -6,6 +6,7 @@ import { Badge } from "./ui/badge";
 import {
   Search,
   ShoppingCart,
+  ShoppingBag,
   User,
   Menu,
   X,
@@ -36,10 +37,10 @@ export const Header = () => {
   const navigation = [
     { name: "Trang chủ", href: "/" },
     {
-      name: "Sản phẩm",
+      name: "Kho hàng",
       href: "/products",
       children: [
-        { name: "Tất cả sản phẩm", href: "/products" },
+        { name: "Tất cả gỗ", href: "/products" },
         ...categories.map(cat => ({
           name: cat.name,
           href: `/products?category=${encodeURIComponent(cat.name)}`
@@ -109,7 +110,7 @@ export const Header = () => {
           <div className="hidden md:flex items-center flex-1 max-w-lg mx-8">
             <div className="relative w-full">
               <Input
-                placeholder="Tìm kiếm sản phẩm..."
+                placeholder="Tìm kiếm mã gỗ/loại gỗ..."
                 className="pr-10"
               />
               <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -144,6 +145,12 @@ export const Header = () => {
                       </Link>
                     </DropdownMenuItem>
                   )}
+                  <DropdownMenuItem asChild>
+                    <Link to="/orders" className="flex items-center gap-2">
+                      <ShoppingBag className="w-4 h-4" />
+                      Lịch sử mua hàng
+                    </Link>
+                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 text-destructive">
                     <LogOut className="w-4 h-4" />
                     Đăng xuất

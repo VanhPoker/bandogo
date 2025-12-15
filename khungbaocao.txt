@@ -1,0 +1,27 @@
+A. Các trang mở đầu và mục lục Phần này bao gồm Lời cảm ơn, Mục lục, Danh mục hình ảnh và Danh mục bảng biểu.
+B. Nội dung chính của báo cáo
+PHẦN I MỞ ĐẦU Phần này giới thiệu tổng quan về đề tài:
+• Tên đề tài: “Xây dựng ứng dụng website quảng bá du lịch”.
+• Đặt vấn đề: Nêu rõ thực trạng nhu cầu du lịch tăng cao nhưng thiếu các website đơn giản, dễ sử dụng, cung cấp đầy đủ thông tin cần thiết.
+• Mục đích và yêu cầu: Trình bày mục đích (giới thiệu điểm đến, thu hút du khách, quảng bá văn hóa địa phương, hỗ trợ dịch vụ đặt tour) và các yêu cầu kỹ thuật đối với website (dễ sử dụng, giao diện đẹp, tốc độ nhanh, khả năng mở rộng).
+PHẦN II TỔNG QUAN TÌNH HÌNH NGHIÊN CỨU TRONG VÀ NGOÀI NƯỚC
+• Tình hình nghiên cứu trong nước: Đánh giá sự phát triển của các website quảng bá du lịch tại Việt Nam (như luavietour.com, dulichvietnam.com), xu hướng tích hợp AI và thanh toán trực tuyến, cùng với những thách thức về cạnh tranh và hạn chế đa ngôn ngữ.
+• Tình hình nghiên cứu ngoài nước: Phân tích các nền tảng lớn toàn cầu (như TripAdvisor, Booking.com), xu hướng cá nhân hóa trải nghiệm du lịch bằng dữ liệu lớn, và cơ hội cho các website mới tại Việt Nam.
+• Tầm quan trọng của đề tài: Nhấn mạnh vai trò của du lịch trong cơ cấu kinh tế Việt Nam và sự cần thiết phải ứng dụng công nghệ thông tin, đặc biệt là website trực tuyến, để phục hồi và phát triển ngành du lịch.
+PHẦN III NỘI DUNG VÀ PHƯƠNG PHÁP NGHIÊN CỨU
+• Nội dung nghiên cứu: Nghiên cứu framework Laravel theo mô hình MVC, tìm hiểu và cài đặt thuật toán TF-IDF kết hợp Cosine Similarity để tính toán độ tương đồng giữa các tour, sử dụng Flask để triển khai mô-đun gợi ý dưới dạng RESTful API, và phân tích các nền tảng đặt tour hiện có.
+• Phương pháp nghiên cứu: Gồm phương pháp nghiên cứu lý luận (thu thập tài liệu về Laravel, Flask, TF-IDF), phương pháp lập trình (sử dụng lập trình hướng đối tượng, tổ chức mã nguồn theo chuẩn Laravel/Flask), và phương pháp nghiên cứu thực nghiệm (chạy thử nghiệm ứng dụng).
+PHẦN IV KẾT QUẢ VÀ THẢO LUẬN Đây là phần chi tiết nhất, bao gồm việc xây dựng và đặc tả hệ thống:
+• Cơ sở lý thuyết: Giới thiệu về Laravel (kiến trúc MVC, Eloquent ORM, Blade, Routing, Bảo mật, Artisan), Phần mềm XAMPP (môi trường phát triển web cục bộ), Quản trị cơ sở dữ liệu trong XAMPP (MySQL/MariaDB, phpMyAdmin), Ngôn ngữ lập trình (Blade + JavaScript, PHP/Laravel, Python), và thuật toán TF-IDF và Tính Toán Similarity (để đánh giá mức độ quan trọng và tương đồng của văn bản).
+• Đặc tả yêu cầu phần mềm: Bao gồm giới thiệu, mục đích, phạm vi của dự án.
+• Các yêu cầu chức năng: Liệt kê các tác nhân (Người dùng, Admin) và các chức năng chính của Website (Đăng nhập, Đăng ký, Quản lý tour, Thống kê và báo cáo, Tìm kiếm, Đặt tour, Đánh giá tour).
+• Biểu đồ use case tổng quan và phân rã: Trình bày mô hình hóa các yêu cầu chức năng dưới dạng biểu đồ.
+• Quy trình nghiệp vụ: Mô tả chi tiết các bước thực hiện các quy trình cốt lõi như sử dụng website, tìm kiếm, xem chi tiết, đặt Tour, thanh toán, đánh giá Tour, và các quy trình quản lý của Admin.
+• Sơ đồ tuần tự (Sequence Diagram): Minh họa luồng tương tác giữa các đối tượng cho các chức năng như đăng ký, đăng nhập, tìm kiếm, đặt Tour, và các tác vụ quản lý của Admin.
+• Đặc tả usecase: Cung cấp chi tiết các trường hợp sử dụng (use case) như Đăng ký (UC001), Đăng nhập (UC002), Tìm kiếm Tour (UC003), Đặt Tour (UC005), Quản lý Tour của Admin (UC008), v.v., bao gồm luồng sự kiện chính và luồng sự kiện thay thế.
+• Thiết kế hệ thống: Mô tả kiến trúc website (Front-End, Back-End, Cơ sở dữ liệu) và thiết kế cơ sở dữ liệu (các bảng user, tours, booking, admin, v.v.).
+• Xây dựng chương trình: Liệt kê công cụ sử dụng (PHP, Laravel, VS Code, PyCharm, Xampp) và tóm tắt các kết quả giao diện đạt được.
+PHẦN IV KẾT LUẬN VÀ ĐỀ NGHỊ
+• Kết luận: Tóm tắt các kết quả đạt được (hiểu quy trình du lịch, phân tích chức năng hệ thống, xây dựng CSDL và website có tính tương tác cao) và những hạn chế còn tồn tại (thiếu bảo mật nâng cao, chưa có tính năng quản lý voucher, tốc độ tải trang chưa tối ưu).
+• Hướng phát triển: Đề xuất các công việc cần tiếp tục triển khai như phát triển tính năng báo cáo thống kê chi tiết, bổ sung các lớp bảo mật nâng cao (JWT, OAuth2, reCAPTCHA), tối ưu hiệu năng bằng kỹ thuật cache, và nâng cấp giao diện responsive.
+PHẦN V TÀI LIỆU THAM KHẢO

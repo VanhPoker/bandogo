@@ -82,14 +82,14 @@ export default function Checkout() {
     return (
         <div className="min-h-screen bg-background py-8">
             <div className="container mx-auto px-4">
-                <h1 className="text-3xl font-bold mb-8">Thanh toán</h1>
+                <h1 className="text-3xl font-bold mb-8">Xác nhận đơn hàng</h1>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     {/* Shipping Form */}
                     <div>
                         <Card>
                             <CardHeader>
-                                <CardTitle>Thông tin giao hàng</CardTitle>
+                                <CardTitle>Thông tin nhận hàng</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <form id="checkout-form" onSubmit={handleSubmit} className="space-y-4">
@@ -177,7 +177,7 @@ export default function Checkout() {
                                         size="lg"
                                         disabled={loading}
                                     >
-                                        {loading ? "Đang xử lý..." : "Đặt hàng"}
+                                        {loading ? "Đang xử lý..." : "Gửi yêu cầu Đặt hàng"}
                                     </Button>
                                 </div>
                             </CardContent>

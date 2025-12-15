@@ -15,13 +15,17 @@ import {
   Settings,
   Newspaper,
   Briefcase,
-  ArrowLeft
+  Briefcase,
+  ArrowLeft,
+  Printer
 } from "lucide-react";
 import { ProductForm } from "@/components/ProductForm";
 import { NewsManager } from "@/components/admin/NewsManager";
 import { ProjectsManager } from "@/components/admin/ProjectsManager";
 import { UsersManager } from "@/components/admin/UsersManager";
 import { RevenueChart } from "@/components/admin/RevenueChart";
+import { ImportManager } from "@/components/admin/ImportManager";
+import { SuppliersManager } from "@/components/admin/SuppliersManager";
 import { useProducts } from "@/hooks/useProducts";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -109,6 +113,9 @@ const OrdersList = () => {
               <Button variant="outline" size="sm" onClick={() => handleViewOrder(order)}>
                 Chi tiết
               </Button>
+              <Button variant="ghost" size="icon" onClick={() => window.open(`/print/order/${order.id}`, '_blank')}>
+                <Printer className="h-4 w-4" />
+              </Button>
             </div>
           </div>
         ))
@@ -134,6 +141,20 @@ const OrdersList = () => {
               <p className="text-sm"><span className="text-muted-foreground">Thanh toán:</span> {selectedOrder?.payment_method}</p>
             </div>
           </div>
+
+          {/* Invoice Info Section */}
+          {(selectedOrder?.customer_tax_code || selectedOrder?.invoice_requested) && (
+            <div className="mb-6 border p-4 rounded-md bg-muted/30">
+              <h3 className="font-semibold mb-2 flex items-center gap-2">
+                <Newspaper className="h-4 w-4" /> Thông tin xuất hoá đơn
+              </h3>
+              <div className="grid grid-cols-2 gap-4">
+                <p className="text-sm"><span className="text-muted-foreground">Tên công ty:</span> {selectedOrder?.customer_company || '---'}</p>
+                <p className="text-sm"><span className="text-muted-foreground">Mã số thuế:</span> {selectedOrder?.customer_tax_code || '---'}</p>
+                <p className="text-sm col-span-2"><span className="text-muted-foreground">Địa chỉ hoá đơn:</span> {selectedOrder?.customer_address_invoice || '---'}</p>
+              </div>
+            </div>
+          )}
 
           <div className="border-t pt-4">
             <h3 className="font-semibold mb-4">Sản phẩm đã mua</h3>
@@ -335,12 +356,30 @@ const Admin = () => {
         <Tabs defaultValue="products" className="space-y-4">
           <TabsList className="flex flex-wrap h-auto">
             <TabsTrigger value="products">Sản phẩm</TabsTrigger>
+            <TabsTrigger value="import">Nhập hàng</TabsTrigger>
             <TabsTrigger value="orders">Đơn hàng</TabsTrigger>
+            <TabsTrigger value="suppliers">Nhà cung cấp</TabsTrigger>
             <TabsTrigger value="news">Tin tức</TabsTrigger>
             <TabsTrigger value="projects">Dự án</TabsTrigger>
             <TabsTrigger value="users">Người dùng</TabsTrigger>
             <TabsTrigger value="settings">Cài đặt</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="import" className="space-y-4">
+            <ImportManager />
+          </TabsContent>
+
+          <TabsContent value="suppliers" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Quản lý nhà cung cấp</CardTitle>
+                <CardDescription>Danh sách các đối tác cung cấp hàng hoá</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <SuppliersManager />
+              </CardContent>
+            </Card>
+          </TabsContent>
 
           <TabsContent value="products" className="space-y-4">
             <div className="flex items-center justify-between mb-6">

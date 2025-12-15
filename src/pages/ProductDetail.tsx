@@ -134,7 +134,7 @@ export default function ProductDetail() {
           <nav className="flex items-center gap-2 text-sm text-muted-foreground">
             <Link to="/" className="hover:text-primary">Trang chủ</Link>
             <span>/</span>
-            <Link to="/products" className="hover:text-primary">Sản phẩm</Link>
+            <Link to="/products" className="hover:text-primary">Kho hàng</Link>
             <span>/</span>
             <Link to={`/products?category=${product.category}`} className="hover:text-primary">
               {product.category}
@@ -252,7 +252,7 @@ export default function ProductDetail() {
             {/* Quantity & Actions */}
             <div className="space-y-4">
               <div className="flex items-center gap-4">
-                <label className="font-medium">Số lượng:</label>
+                <label className="font-medium">Số lượng (tấm):</label>
                 <div className="flex items-center border border-input rounded-md">
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
@@ -286,7 +286,7 @@ export default function ProductDetail() {
                   });
                 }}>
                   <ShoppingCart className="w-5 h-5 mr-2" />
-                  Thêm vào giỏ hàng
+                  Thêm vào đơn hàng
                 </Button>
                 <Button
                   variant={isWishlisted ? "default" : "outline"}
@@ -411,10 +411,10 @@ export default function ProductDetail() {
 
         {/* Related Products */}
         <section>
-          <h2 className="text-2xl font-bold mb-8">Sản phẩm liên quan</h2>
+          <h2 className="text-2xl font-bold mb-8">Gỗ cùng loại</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {RELATED_PRODUCTS.map((product) => (
-              <ProductCard key={product.id} {...product} />
+              <ProductCard key={product.id} {...product} price={product.price.toString()} />
             ))}
           </div>
         </section>

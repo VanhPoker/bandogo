@@ -19,6 +19,9 @@ import Checkout from "./pages/Checkout";
 import OrderSuccess from "./pages/OrderSuccess";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
+import ImportInvoice from "./pages/print/ImportInvoice";
+import OrderInvoice from "./pages/print/OrderInvoice";
+import MyOrders from "./pages/MyOrders";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +36,8 @@ const App = () => (
             <Routes>
               <Route path="/auth" element={<Auth />} />
               <Route path="/admin" element={<Admin />} />
+              <Route path="/print/import/:id" element={<ImportInvoice />} />
+              <Route path="/print/order/:id" element={<OrderInvoice />} />
               <Route path="/" element={<Layout />}>
                 <Route index element={<Index />} />
                 <Route path="products" element={<Products />} />
@@ -44,6 +49,7 @@ const App = () => (
                 <Route path="cart" element={<Cart />} />
                 <Route path="checkout" element={<Checkout />} />
                 <Route path="order-success" element={<OrderSuccess />} />
+                <Route path="orders" element={<MyOrders />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Route>

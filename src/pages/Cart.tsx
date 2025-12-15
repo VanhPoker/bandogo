@@ -18,12 +18,12 @@ export default function Cart() {
                             <ShoppingBag className="w-12 h-12 text-muted-foreground" />
                         </div>
                     </div>
-                    <h1 className="text-2xl font-bold mb-4">Giỏ hàng của bạn đang trống</h1>
+                    <h1 className="text-2xl font-bold mb-4">Danh sách hàng đang trống</h1>
                     <p className="text-muted-foreground mb-8">
                         Hãy dạo quanh cửa hàng và thêm những sản phẩm yêu thích vào giỏ hàng nhé.
                     </p>
                     <Button asChild size="lg">
-                        <Link to="/products">Tiếp tục mua sắm</Link>
+                        <Link to="/products">Xem kho hàng</Link>
                     </Button>
                 </div>
             </div>
@@ -33,7 +33,7 @@ export default function Cart() {
     return (
         <div className="min-h-screen bg-background py-8">
             <div className="container mx-auto px-4">
-                <h1 className="text-3xl font-bold mb-8">Giỏ hàng ({items.length} sản phẩm)</h1>
+                <h1 className="text-3xl font-bold mb-8">Danh sách hàng ({items.length} mục)</h1>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* Cart Items */}
@@ -109,7 +109,7 @@ export default function Cart() {
                     <div className="lg:col-span-1">
                         <Card className="sticky top-24">
                             <CardContent className="p-6">
-                                <h3 className="text-lg font-semibold mb-4">Tổng đơn hàng</h3>
+                                <h3 className="text-lg font-semibold mb-4">Tổng giá trị đơn hàng</h3>
 
                                 <div className="space-y-3 mb-6">
                                     <div className="flex justify-between text-muted-foreground">
@@ -128,13 +128,13 @@ export default function Cart() {
                                 </div>
 
                                 <Button className="w-full" size="lg" onClick={() => navigate('/checkout')}>
-                                    Tiến hành thanh toán
+                                    Xác nhận đặt hàng
                                 </Button>
 
                                 <Button variant="link" className="w-full mt-2" asChild>
                                     <Link to="/products">
                                         <ArrowLeft className="w-4 h-4 mr-2" />
-                                        Tiếp tục mua sắm
+                                        Tiếp tục chọn gỗ
                                     </Link>
                                 </Button>
                             </CardContent>
