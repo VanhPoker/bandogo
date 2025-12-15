@@ -170,7 +170,23 @@ export const ImportManager = () => {
     };
 
     const handleSubmitOrder = async () => {
-        if (!selectedSupplier || importItems.length === 0) {
+        // Auto-add pending item if user forgot to click "Add"
+        let finalItems = [...importItems];
+        if (finalItems.length === 0 && selectedProduct && quantity > 0) {
+            const product = products.find(p => p.id === selectedProduct);
+            if (product) {
+                finalItems.push({
+                    product_id: product.id,
+                    product_name: product.name,
+                    quantity,
+                    import_price: importPrice,
+                    sell_price: newSellPrice > 0 ? newSellPrice : undefined
+                });
+                toast({ title: "Thông báo", description: "Đã tự động thêm sản phẩm vào đơn hàng" });
+            }
+        }
+
+        if (!selectedSupplier || finalItems.length === 0) {
             toast({ variant: "destructive", title: "Lỗi", description: "Vui lòng chọn nhà cung cấp và thêm sản phẩm" });
             return;
         }
@@ -179,7 +195,7 @@ export const ImportManager = () => {
             setLoading(true);
 
             // 1. Create Import Order
-            const totalAmount = importItems.reduce((sum, item) => sum + (item.quantity * item.import_price), 0);
+            const totalAmount = finalItems.reduce((sum, item) => sum + (item.quantity * item.import_price), 0);
             const { data: orderData, error: orderError } = await supabase
                 .from('import_orders')
                 .insert([{
@@ -194,7 +210,7 @@ export const ImportManager = () => {
             if (orderError) throw orderError;
 
             // 2. Create Items and Update Product Stock/Prices
-            for (const item of importItems) {
+            for (const item of finalItems) {
                 // Create Import Item
                 await supabase.from('import_order_items').insert({
                     import_order_id: orderData.id,
@@ -206,9 +222,6 @@ export const ImportManager = () => {
 
                 // Update Product
                 const updates: any = {
-                    // RPC would be safer for stock increment, but using client update for simplicity as per current project pattern
-                    // We need to fetch current stock first to be safe or use simple increment if possible?
-                    // Supabase doesn't have simple increment via update without rpc.
                     // We'll rely on our local product data for the calculation or fetch fresh.
                 };
 
@@ -232,6 +245,12 @@ export const ImportManager = () => {
             setImportItems([]);
             setSelectedSupplier("");
             setInvoiceNumber("");
+
+            // Reset pending inputs too
+            setSelectedProduct("");
+            setQuantity(1);
+            setImportPrice(0);
+            setNewSellPrice(0);
 
         } catch (error) {
             console.error("Error creating import:", error);
