@@ -71,7 +71,7 @@ export const Header = () => {
               </div>
               <div className="flex items-center gap-2 text-muted-foreground">
                 <Mail className="w-4 h-4" />
-                <span>info@moctinhhoa.com</span>
+                <span>info@ducletinhhoa.com</span>
               </div>
             </div>
             <div className="hidden md:flex items-center gap-4">
@@ -99,9 +99,9 @@ export const Header = () => {
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3">
-            <img src="/moctinhhoa.png" alt="Mộc Tinh Hoa" className="h-12 w-auto object-contain" />
+            <img src="/moctinhhoa.png" alt="Gỗ Đại Thắng" className="h-12 w-auto object-contain" />
             <div className="hidden sm:block">
-              <h1 className="text-xl font-bold text-foreground">Mộc Tinh Hoa</h1>
+              <h1 className="text-xl font-bold text-foreground">Gỗ Đại Thắng</h1>
               <p className="text-xs text-muted-foreground">Chất lượng - Uy tín - Bền vững</p>
             </div>
           </Link>
@@ -145,6 +145,12 @@ export const Header = () => {
                       </Link>
                     </DropdownMenuItem>
                   )}
+                  <DropdownMenuItem asChild>
+                    <Link to="/profile" className="flex items-center gap-2">
+                      <User className="w-4 h-4" />
+                      Hồ sơ cá nhân
+                    </Link>
+                  </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link to="/orders" className="flex items-center gap-2">
                       <ShoppingBag className="w-4 h-4" />
@@ -280,6 +286,15 @@ export const Header = () => {
                       Quản lý hệ thống
                     </Link>
                   )}
+
+                  <Link
+                    to="/profile"
+                    className="block px-2 py-2 text-foreground hover:text-primary transition-colors flex items-center gap-2"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <User className="w-4 h-4" />
+                    Hồ sơ cá nhân
+                  </Link>
 
                   <button
                     onClick={() => {

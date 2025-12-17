@@ -59,7 +59,7 @@ export default function OrderInvoice() {
         <div className="max-w-4xl mx-auto p-8 bg-white text-black print:p-0">
             <div className="flex justify-between items-start mb-8">
                 <div>
-                    <h1 className="text-3xl font-bold mb-2">MỘC TINH HOA</h1>
+                    <h1 className="text-3xl font-bold mb-2">Gỗ Đại Thắng</h1>
                     <p>Địa chỉ: 123 Đường Gỗ, Khu CN ABC, TP.HCM</p>
                     <p>SĐT: 0123 456 789 | Email: info@moctinhhoa.com</p>
                     <p>Website: moctinhhoa.com</p>
@@ -145,7 +145,7 @@ export default function OrderInvoice() {
                     <p className="font-bold">Người bán hàng</p>
                     <p className="text-sm italic text-gray-500">(Ký, ghi rõ họ tên)</p>
                     <div className="h-24"></div>
-                    <p className="font-semibold">Mộc Tinh Hoa</p>
+                    <p className="font-semibold">Gỗ Đại Thắng</p>
                 </div>
             </div>
 

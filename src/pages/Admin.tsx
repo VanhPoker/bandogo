@@ -6,6 +6,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { toast } from "@/hooks/use-toast";
 import {
   Package,
   Users,
@@ -35,6 +38,15 @@ const OrdersList = () => {
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [orderDetails, setOrderDetails] = useState<any[]>([]);
   const [loadingDetails, setLoadingDetails] = useState(false);
+  const [updatingStatus, setUpdatingStatus] = useState(false);
+
+  const ORDER_STATUSES = [
+    { value: 'pending', label: 'Chờ xử lý' },
+    { value: 'processing', label: 'Đang xử lý' },
+    { value: 'shipped', label: 'Đang giao' },
+    { value: 'delivered', label: 'Đã giao' },
+    { value: 'cancelled', label: 'Đã hủy' },
+  ];
 
   useEffect(() => {
     fetchOrders();
@@ -83,6 +95,37 @@ const OrdersList = () => {
   const handleViewOrder = (order: any) => {
     setSelectedOrder(order);
     fetchOrderDetails(order.id);
+  };
+
+  const handleUpdateStatus = async (newStatus: string) => {
+    if (!selectedOrder) return;
+    setUpdatingStatus(true);
+    try {
+      const { error } = await supabase
+        .from('orders')
+        .update({ status: newStatus })
+        .eq('id', selectedOrder.id);
+
+      if (error) throw error;
+
+      // Update local state
+      setSelectedOrder({ ...selectedOrder, status: newStatus });
+      setOrders(orders.map(o => o.id === selectedOrder.id ? { ...o, status: newStatus } : o));
+
+      toast({
+        title: "Cập nhật thành công",
+        description: `Trạng thái đơn hàng đã được cập nhật thành "${ORDER_STATUSES.find(s => s.value === newStatus)?.label}"`,
+      });
+    } catch (error) {
+      console.error('Error updating order status:', error);
+      toast({
+        title: "Lỗi",
+        description: "Không thể cập nhật trạng thái đơn hàng",
+        variant: "destructive",
+      });
+    } finally {
+      setUpdatingStatus(false);
+    }
   };
 
   if (loading) return <div>Đang tải đơn hàng...</div>;
@@ -137,8 +180,26 @@ const OrdersList = () => {
             <div>
               <h3 className="font-semibold mb-2">Thông tin đơn hàng</h3>
               <p className="text-sm"><span className="text-muted-foreground">Ngày đặt:</span> {selectedOrder && new Date(selectedOrder.created_at).toLocaleDateString('vi-VN')}</p>
-              <p className="text-sm"><span className="text-muted-foreground">Trạng thái:</span> {selectedOrder?.status}</p>
-              <p className="text-sm"><span className="text-muted-foreground">Thanh toán:</span> {selectedOrder?.payment_method}</p>
+              <div className="flex items-center gap-2 mt-2">
+                <Label className="text-sm text-muted-foreground">Trạng thái:</Label>
+                <Select
+                  value={selectedOrder?.status || 'pending'}
+                  onValueChange={handleUpdateStatus}
+                  disabled={updatingStatus}
+                >
+                  <SelectTrigger className="w-[160px] h-8">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {ORDER_STATUSES.map((status) => (
+                      <SelectItem key={status.value} value={status.value}>
+                        {status.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <p className="text-sm mt-1"><span className="text-muted-foreground">Thanh toán:</span> {selectedOrder?.payment_method}</p>
             </div>
           </div>
 
@@ -290,7 +351,7 @@ const Admin = () => {
             Về trang chủ
           </Button>
           <div className="flex items-center gap-4 mb-2">
-            <img src="/moctinhhoa.png" alt="Mộc Tinh Hoa" className="h-12 w-auto object-contain" />
+            <img src="/moctinhhoa.png" alt="Gỗ Đại Thắng" className="h-12 w-auto object-contain" />
             <h1 className="text-3xl font-bold">Bảng điều khiển Admin</h1>
           </div>
           <p className="text-muted-foreground">Quản lý website và sản phẩm</p>

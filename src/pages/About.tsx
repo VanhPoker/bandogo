@@ -69,7 +69,7 @@ export default function About() {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              Về Mộc Tinh Hoa
+              Về Gỗ Đại Thắng
             </h1>
             <p className="text-xl opacity-90 mb-8 leading-relaxed">
               Với hơn 13 năm kinh nghiệm, chúng tôi tự hào là đơn vị tiên phong trong lĩnh vực
@@ -257,7 +257,7 @@ export default function About() {
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">Tại sao chọn chúng tôi?</h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Những lợi ích vượt trội khi làm việc với Mộc Tinh Hoa
+              Những lợi ích vượt trội khi làm việc với Gỗ Đại Thắng
             </p>
           </div>
 

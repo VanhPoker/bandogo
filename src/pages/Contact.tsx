@@ -21,7 +21,7 @@ const LOCATIONS = [
     name: "Trụ sở chính - TP.HCM",
     address: "123 Đường Nguyễn Văn Linh, Quận 7, TP. Hồ Chí Minh",
     phone: "028 3123 4567",
-    email: "info@moctinhhoa.com",
+    email: "info@ducletinhhoa.com",
     hours: "T2-T7: 8:00 - 17:30, CN: 8:00 - 12:00",
     type: "headquarters"
   },
@@ -92,7 +92,7 @@ export default function Contact() {
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="w-5 h-5" />
-                <span className="font-medium">info@moctinhhoa.com</span>
+                <span className="font-medium">info@ducletinhhoa.com</span>
               </div>
             </div>
           </div>

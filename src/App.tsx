@@ -22,6 +22,7 @@ import NotFound from "./pages/NotFound";
 import ImportInvoice from "./pages/print/ImportInvoice";
 import OrderInvoice from "./pages/print/OrderInvoice";
 import MyOrders from "./pages/MyOrders";
+import Profile from "./pages/Profile";
 
 const queryClient = new QueryClient();
 
@@ -50,6 +51,7 @@ const App = () => (
                 <Route path="checkout" element={<Checkout />} />
                 <Route path="order-success" element={<OrderSuccess />} />
                 <Route path="orders" element={<MyOrders />} />
+                <Route path="profile" element={<Profile />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Route>
