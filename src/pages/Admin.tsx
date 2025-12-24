@@ -18,7 +18,6 @@ import {
   Settings,
   Newspaper,
   Briefcase,
-  Briefcase,
   ArrowLeft,
   Printer
 } from "lucide-react";
@@ -99,6 +98,7 @@ const OrdersList = () => {
 
   const handleUpdateStatus = async (newStatus: string) => {
     if (!selectedOrder) return;
+    const previousStatus = selectedOrder.status;
     setUpdatingStatus(true);
     try {
       const { error } = await supabase
@@ -107,6 +107,38 @@ const OrdersList = () => {
         .eq('id', selectedOrder.id);
 
       if (error) throw error;
+
+      // Giảm stock khi đơn hàng được giao thành công (delivered)
+      // Chỉ giảm stock nếu trạng thái trước đó không phải là delivered (tránh giảm nhiều lần)
+      if (newStatus === 'delivered' && previousStatus !== 'delivered') {
+        // Fetch order items
+        const { data: items, error: itemsError } = await supabase
+          .from('order_items')
+          .select('product_id, quantity')
+          .eq('order_id', selectedOrder.id);
+
+        if (itemsError) {
+          console.error('Error fetching order items:', itemsError);
+        } else if (items && items.length > 0) {
+          // Giảm stock cho từng sản phẩm
+          for (const item of items) {
+            // Lấy stock hiện tại
+            const { data: product } = await supabase
+              .from('products')
+              .select('stock_quantity')
+              .eq('id', item.product_id)
+              .single();
+
+            if (product) {
+              const newStock = Math.max(0, product.stock_quantity - item.quantity);
+              await supabase
+                .from('products')
+                .update({ stock_quantity: newStock })
+                .eq('id', item.product_id);
+            }
+          }
+        }
+      }
 
       // Update local state
       setSelectedOrder({ ...selectedOrder, status: newStatus });

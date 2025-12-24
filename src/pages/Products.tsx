@@ -300,8 +300,8 @@ export default function Products() {
 
             {/* Products Grid */}
             <div className={`grid gap-6 ${viewMode === "grid"
-                ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-                : "grid-cols-1"
+              ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+              : "grid-cols-1"
               }`}>
               {filteredProducts.map((product) => (
                 <ProductCard
@@ -315,6 +315,7 @@ export default function Products() {
                   rating={4.5} // Default rating, can be enhanced later
                   reviews={0} // Default reviews, can be enhanced later
                   className={viewMode === "list" ? "flex-row" : ""}
+                  stockQuantity={product.stock_quantity}
                 />
               ))}
             </div>

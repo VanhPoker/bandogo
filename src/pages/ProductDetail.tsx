@@ -33,39 +33,11 @@ interface Product {
   is_active: boolean;
 }
 
-const RELATED_PRODUCTS = [
-  {
-    id: "2",
-    name: "Ván MFC Melamine Xám",
-    price: 820000,
-    image: "/placeholder.svg",
-    category: "Ván MFC",
-    rating: 4.7,
-    reviews: 89
-  },
-  {
-    id: "3",
-    name: "Ván MFC Vân Gỗ Sồi",
-    price: 950000,
-    image: "/placeholder.svg",
-    category: "Ván MFC",
-    rating: 4.9,
-    reviews: 156
-  },
-  {
-    id: "4",
-    name: "Cạnh ABS Trắng 2mm",
-    price: 45000,
-    image: "/placeholder.svg",
-    category: "Phụ kiện",
-    rating: 4.6,
-    reviews: 67
-  }
-];
 
 export default function ProductDetail() {
   const { id } = useParams();
   const [product, setProduct] = useState<Product | null>(null);
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
@@ -86,6 +58,21 @@ export default function ProductDetail() {
 
       if (error) throw error;
       setProduct(data);
+
+      // Fetch related products (same category, exclude current product)
+      if (data?.category) {
+        const { data: related, error: relatedError } = await supabase
+          .from('products')
+          .select('*')
+          .eq('category', data.category)
+          .eq('is_active', true)
+          .neq('id', id)
+          .limit(4);
+
+        if (!relatedError && related) {
+          setRelatedProducts(related);
+        }
+      }
     } catch (error) {
       console.error('Error fetching product:', error);
     } finally {
@@ -245,7 +232,7 @@ export default function ProductDetail() {
             <div className="flex items-center gap-2">
               <div className={`w-3 h-3 rounded-full ${product.stock_quantity > 0 ? 'bg-green-500' : 'bg-red-500'}`} />
               <span className={product.stock_quantity > 0 ? 'text-green-600' : 'text-red-600'}>
-                {product.stock_quantity > 0 ? 'Còn hàng' : 'Hết hàng'}
+                {product.stock_quantity > 0 ? `Còn hàng (${product.stock_quantity} sản phẩm)` : 'Hết hàng'}
               </span>
             </div>
 
@@ -410,14 +397,26 @@ export default function ProductDetail() {
         </Tabs>
 
         {/* Related Products */}
-        <section>
-          <h2 className="text-2xl font-bold mb-8">Gỗ cùng loại</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {RELATED_PRODUCTS.map((product) => (
-              <ProductCard key={product.id} {...product} price={product.price.toString()} />
-            ))}
-          </div>
-        </section>
+        {relatedProducts.length > 0 && (
+          <section>
+            <h2 className="text-2xl font-bold mb-8">Gỗ cùng loại</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {relatedProducts.map((relatedProduct) => (
+                <ProductCard
+                  key={relatedProduct.id}
+                  id={relatedProduct.id}
+                  name={relatedProduct.name}
+                  price={relatedProduct.price.toLocaleString('vi-VN')}
+                  image={relatedProduct.images?.[0] || '/placeholder.svg'}
+                  category={relatedProduct.category}
+                  stockQuantity={relatedProduct.stock_quantity}
+                  rating={4.5}
+                  reviews={0}
+                />
+              ))}
+            </div>
+          </section>
+        )}
       </div>
     </div>
   );

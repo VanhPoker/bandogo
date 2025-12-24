@@ -82,7 +82,7 @@ const Index = () => {
               </Button>
             </Link>
             <Link to="/contact">
-              <Button variant="outline" size="lg" className="text-lg px-8 py-6 border-white text-white hover:bg-white hover:text-black">
+              <Button variant="outline" size="lg" className="text-lg px-8 py-6 border-white text-black  hover:bg-white hover:text-black">
                 Liên hệ tư vấn
               </Button>
             </Link>
@@ -153,6 +153,7 @@ const Index = () => {
                 specs={product.specifications?.features || []}
                 rating={4.5}
                 reviews={0}
+                stockQuantity={product.stock_quantity}
               />
             ))}
           </div>
@@ -171,12 +172,12 @@ const Index = () => {
 
 
       {/* CTA Section */}
-      <section className="py-16 bg-gradient-wood text-white">
+      <section className="py-16 bg-gradient-wood text-black">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Bạn Cần Tư Vấn Sản Phẩm?
           </h2>
-          <p className="text-xl mb-8 text-white/90 max-w-2xl mx-auto">
+          <p className="text-xl mb-8 text-black/90 max-w-2xl mx-auto">
             Đội ngũ chuyên gia của chúng tôi sẵn sàng hỗ trợ bạn lựa chọn sản phẩm phù hợp nhất
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -184,7 +185,7 @@ const Index = () => {
               Gọi ngay: 0123 456 789
             </Button>
             <Link to="/contact">
-              <Button variant="outline" size="lg" className="text-lg px-8 py-6 border-white text-white hover:bg-white hover:text-black">
+              <Button variant="outline" size="lg" className="text-lg px-8 py-6 border-black text-black hover:bg-black hover:text-white">
                 Gửi yêu cầu tư vấn
               </Button>
             </Link>

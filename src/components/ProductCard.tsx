@@ -19,6 +19,7 @@ interface ProductCardProps {
   isNew?: boolean;
   isBestSeller?: boolean;
   className?: string;
+  stockQuantity?: number;
 }
 
 export const ProductCard = ({
@@ -33,7 +34,8 @@ export const ProductCard = ({
   specs,
   isNew,
   isBestSeller,
-  className
+  className,
+  stockQuantity
 }: ProductCardProps) => {
   const { addItem } = useCart();
 
@@ -72,6 +74,14 @@ export const ProductCard = ({
           {originalPrice && price && (
             <Badge variant="destructive" className="text-xs">
               -{Math.round(((parseInt(originalPrice.replace(/,/g, '')) - parseInt(price.replace(/,/g, ''))) / parseInt(originalPrice.replace(/,/g, ''))) * 100)}%
+            </Badge>
+          )}
+          {stockQuantity !== undefined && (
+            <Badge
+              variant={stockQuantity > 0 ? "secondary" : "destructive"}
+              className="text-xs"
+            >
+              {stockQuantity > 0 ? `Còn ${stockQuantity} sp` : 'Hết hàng'}
             </Badge>
           )}
         </div>
@@ -127,8 +137,8 @@ export const ProductCard = ({
                     <Star
                       key={i}
                       className={`w-3 h-3 ${i < Math.floor(rating)
-                          ? 'fill-yellow-400 text-yellow-400'
-                          : 'text-muted-foreground'
+                        ? 'fill-yellow-400 text-yellow-400'
+                        : 'text-muted-foreground'
                         }`}
                     />
                   ))}
