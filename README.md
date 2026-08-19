@@ -606,3 +606,59 @@ sequenceDiagram
     UI-->>Customer: Badge giỏ hàng cập nhật số lượng
 ```
 
+
+---
+
+## 🛠️ Cài Đặt & Triển Khai
+
+### 1. Chuẩn bị Supabase
+
+Tạo project trên [supabase.com](https://supabase.com), rồi chạy hai script SQL trong
+Dashboard → SQL Editor (hoặc qua `psql`) theo đúng thứ tự:
+
+| Script | Nội dung |
+|---|---|
+| `supabase/setup_full.sql` | Toàn bộ schema (14 bảng, RLS, function, trigger, storage bucket) + dữ liệu mẫu |
+| `supabase/seed_images.sql` | Gán ảnh cho sản phẩm / tin tức / dự án |
+
+`setup_full.sql` **xoá và tạo lại** các bảng ứng dụng, chỉ chạy trên project trống.
+
+Nguồn gốc từng ảnh ghi ở `supabase/IMAGE_CREDITS.md` (toàn bộ CC0 / Public Domain).
+
+### 2. Cấu hình biến môi trường
+
+```bash
+cp .env.example .env
+```
+
+Điền `VITE_SUPABASE_URL` và `VITE_SUPABASE_PUBLISHABLE_KEY` lấy từ
+Supabase Dashboard → Settings → API. Muốn đổi sang project khác nhanh:
+
+```bash
+bash scripts/point-to-project.sh <PROJECT_REF> <PUBLISHABLE_KEY>
+```
+
+### 3. Chạy local
+
+```bash
+pnpm install
+pnpm dev
+```
+
+### 4. Cấp quyền admin
+
+Tài khoản mới đăng ký mặc định có role `user`. Nâng lên admin bằng SQL:
+
+```sql
+insert into user_roles (user_id, role)
+select id, 'admin' from auth.users where email = 'you@example.com'
+on conflict do nothing;
+```
+
+### 5. Deploy lên Vercel
+
+Project dùng Vite + React Router. File `vercel.json` đã khai báo rewrite
+`/(.*) → /index.html` để deep link không bị 404 khi refresh.
+
+Import repo tại [vercel.com/new](https://vercel.com/new) — Vercel tự nhận framework
+Vite và build bằng pnpm. Mỗi lần push lên `main` sẽ tự deploy lại.
