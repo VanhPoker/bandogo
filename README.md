@@ -2,6 +2,28 @@
 
 Dự án website thương mại điện tử chuyên cung cấp các sản phẩm gỗ nội thất, ván công nghiệp và phụ kiện mộc. Website bao gồm đầy đủ các tính năng cho người dùng mua sắm và trang quản trị cho admin.
 
+**Bản chạy thật:** https://bandogo.vercel.app
+
+## 📚 Tài Liệu
+
+| Tài liệu | Nội dung |
+|---|---|
+| [docs/SETUP.md](docs/SETUP.md) | Cài đặt từ số 0: Supabase, biến môi trường, chạy local, cấp quyền admin, xử lý sự cố |
+| [docs/USAGE.md](docs/USAGE.md) | Cách dùng: luồng khách hàng, trang quản trị, tồn kho, những thứ chưa có |
+| [docs/DATABASE.md](docs/DATABASE.md) | 14 bảng, RLS, function, storage, cách reset |
+| [docs/DEPLOY.md](docs/DEPLOY.md) | Deploy Vercel, kiểm tra sau deploy, lỗi từng gặp |
+
+Chạy nhanh:
+
+```bash
+corepack enable
+pnpm install
+cp .env.example .env      # điền URL + publishable key của Supabase
+pnpm dev                  # http://localhost:8080
+```
+
+---
+
 ## 🚀 Công Nghệ Sử Dụng
 
 - **Frontend:** React (Vite), TypeScript
@@ -183,40 +205,21 @@ Dự án website thương mại điện tử chuyên cung cấp các sản phẩ
 | `orders` | Đơn hàng (Thông tin khách hàng, tổng tiền, trạng thái) |
 | `order_items` | Chi tiết sản phẩm trong đơn hàng |
 | `profiles` | Thông tin người dùng (liên kết với Supabase Auth) |
+| `user_roles` | Phân quyền (`admin` / `user`) |
 | `suppliers` | Thông tin nhà cung cấp |
 | `import_orders` | Đơn nhập hàng từ NCC |
 | `import_order_items` | Chi tiết sản phẩm trong đơn nhập |
+| `contracts` | Hợp đồng (schema sẵn, UI chưa nối đủ) |
+| `quotes` | Báo giá (schema sẵn, UI chưa nối đủ) |
+| `shipments` | Vận đơn (schema sẵn, UI chưa nối đủ) |
+
+Chi tiết cột, RLS policy và function: [docs/DATABASE.md](docs/DATABASE.md).
 
 ---
 
 ## 🛠️ Hướng Dẫn Cài Đặt
 
-### 1. Clone dự án
-```bash
-git clone https://github.com/VanhPoker/bandogo.git
-cd bandogo
-```
-
-### 2. Cài đặt dependencies
-```bash
-pnpm install
-```
-
-### 3. Cấu hình môi trường
-Tạo file `.env` tại thư mục gốc và điền thông tin Supabase của bạn:
-```env
-VITE_SUPABASE_URL=your_supabase_project_url
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-```
-
-### 4. Thiết lập Database
-Chạy các file SQL trong thư mục `supabase/migrations` hoặc `supabase/seed_data.sql` trên SQL Editor của Supabase để tạo bảng và dữ liệu mẫu.
-
-### 5. Chạy dự án
-```bash
-pnpm dev
-```
-Truy cập `http://localhost:8080` để xem kết quả.
+Xem [docs/SETUP.md](docs/SETUP.md) — hướng dẫn đầy đủ từ số 0, kèm mục xử lý sự cố.
 
 ---
 
@@ -611,54 +614,9 @@ sequenceDiagram
 
 ## 🛠️ Cài Đặt & Triển Khai
 
-### 1. Chuẩn bị Supabase
+Đã tách sang thư mục `docs/`:
 
-Tạo project trên [supabase.com](https://supabase.com), rồi chạy hai script SQL trong
-Dashboard → SQL Editor (hoặc qua `psql`) theo đúng thứ tự:
-
-| Script | Nội dung |
-|---|---|
-| `supabase/setup_full.sql` | Toàn bộ schema (14 bảng, RLS, function, trigger, storage bucket) + dữ liệu mẫu |
-| `supabase/seed_images.sql` | Gán ảnh cho sản phẩm / tin tức / dự án |
-
-`setup_full.sql` **xoá và tạo lại** các bảng ứng dụng, chỉ chạy trên project trống.
-
-Nguồn gốc từng ảnh ghi ở `supabase/IMAGE_CREDITS.md` (toàn bộ CC0 / Public Domain).
-
-### 2. Cấu hình biến môi trường
-
-```bash
-cp .env.example .env
-```
-
-Điền `VITE_SUPABASE_URL` và `VITE_SUPABASE_PUBLISHABLE_KEY` lấy từ
-Supabase Dashboard → Settings → API. Muốn đổi sang project khác nhanh:
-
-```bash
-bash scripts/point-to-project.sh <PROJECT_REF> <PUBLISHABLE_KEY>
-```
-
-### 3. Chạy local
-
-```bash
-pnpm install
-pnpm dev
-```
-
-### 4. Cấp quyền admin
-
-Tài khoản mới đăng ký mặc định có role `user`. Nâng lên admin bằng SQL:
-
-```sql
-insert into user_roles (user_id, role)
-select id, 'admin' from auth.users where email = 'you@example.com'
-on conflict do nothing;
-```
-
-### 5. Deploy lên Vercel
-
-Project dùng Vite + React Router. File `vercel.json` đã khai báo rewrite
-`/(.*) → /index.html` để deep link không bị 404 khi refresh.
-
-Import repo tại [vercel.com/new](https://vercel.com/new) — Vercel tự nhận framework
-Vite và build bằng pnpm. Mỗi lần push lên `main` sẽ tự deploy lại.
+- **Dựng dự án** → [docs/SETUP.md](docs/SETUP.md)
+- **Dùng website & trang admin** → [docs/USAGE.md](docs/USAGE.md)
+- **Schema, RLS, storage** → [docs/DATABASE.md](docs/DATABASE.md)
+- **Deploy Vercel** → [docs/DEPLOY.md](docs/DEPLOY.md)
