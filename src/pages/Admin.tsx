@@ -15,7 +15,6 @@ import {
   ShoppingCart,
   BarChart3,
   Plus,
-  Settings,
   Newspaper,
   Briefcase,
   ArrowLeft,
@@ -458,7 +457,6 @@ const Admin = () => {
             <TabsTrigger value="news">Tin tức</TabsTrigger>
             <TabsTrigger value="projects">Dự án</TabsTrigger>
             <TabsTrigger value="users">Người dùng</TabsTrigger>
-            <TabsTrigger value="settings">Cài đặt</TabsTrigger>
           </TabsList>
 
           <TabsContent value="import" className="space-y-4">
@@ -603,26 +601,6 @@ const Admin = () => {
               </CardHeader>
               <CardContent>
                 <UsersManager />
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="settings" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Cài đặt hệ thống</CardTitle>
-                <CardDescription>
-                  Cấu hình các thông số của website
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-12 text-muted-foreground">
-                  <Settings className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p>Chức năng cài đặt hệ thống sẽ được triển khai ở đây</p>
-                  <p className="text-sm mt-2">
-                    Bao gồm: Thông tin công ty, logo, thông tin liên hệ, SEO
-                  </p>
-                </div>
               </CardContent>
             </Card>
           </TabsContent>
