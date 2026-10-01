@@ -8,9 +8,25 @@ import { Badge } from "@/components/ui/badge";
 import { Search, Filter, Grid, List } from "lucide-react";
 import { useProducts } from "@/hooks/useProducts";
 
-const COLORS = ["Tất cả", "Trắng", "Xám", "Vân gỗ sồi", "Vân gỗ óc chó", "Đen"];
-const SIZES = ["Tất cả", "2440x1220mm", "2800x2070mm", "1830x2440mm"];
-const THICKNESS = ["Tất cả", "6mm", "9mm", "12mm", "15mm", "18mm", "25mm"];
+const ALL = "Tất cả";
+
+// Sizes are typed by hand, so "2440x1220mm" and "1220 x 2440 mm" must
+// compare equal: keep the numbers, order them, and rebuild one format.
+const normalizeSize = (value?: string) => {
+  const dims = value?.match(/\d+(\.\d+)?/g);
+  if (!dims || dims.length < 2) return value?.trim() ?? "";
+  return `${dims.map(Number).sort((a, b) => a - b).join("x")}mm`;
+};
+
+const normalizeThickness = (value?: string) =>
+  value?.replace(/\s+/g, "").toLowerCase() ?? "";
+
+const normalizeColor = (value?: string) => value?.trim() ?? "";
+
+const uniqueOptions = (values: string[], compare?: (a: string, b: string) => number) =>
+  [ALL, ...Array.from(new Set(values.filter(Boolean))).sort(compare)];
+
+const byLeadingNumber = (a: string, b: string) => parseFloat(a) - parseFloat(b);
 
 export default function Products() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -50,6 +66,26 @@ export default function Products() {
     return ["Tất cả", ...categoryNames];
   }, [categories]);
 
+  // Build filter options from the products themselves so every option
+  // matches at least one product and new specs show up without code changes
+  const colorOptions = useMemo(
+    () => uniqueOptions(
+      products.map(p => normalizeColor(p.specifications?.color)),
+      (a, b) => a.localeCompare(b, "vi")
+    ),
+    [products]
+  );
+
+  const sizeOptions = useMemo(
+    () => uniqueOptions(products.map(p => normalizeSize(p.specifications?.size)), byLeadingNumber),
+    [products]
+  );
+
+  const thicknessOptions = useMemo(
+    () => uniqueOptions(products.map(p => normalizeThickness(p.specifications?.thickness)), byLeadingNumber),
+    [products]
+  );
+
   // Filter and sort products
   const filteredProducts = useMemo(() => {
     let filtered = products.filter(product => {
@@ -63,7 +99,20 @@ export default function Products() {
         return false;
       }
 
-      // Other filters can be added here based on specifications
+      const specs = product.specifications ?? {};
+
+      if (selectedColor !== ALL && normalizeColor(specs.color) !== selectedColor) {
+        return false;
+      }
+
+      if (selectedSize !== ALL && normalizeSize(specs.size) !== selectedSize) {
+        return false;
+      }
+
+      if (selectedThickness !== ALL && normalizeThickness(specs.thickness) !== selectedThickness) {
+        return false;
+      }
+
       return true;
     });
 
@@ -85,7 +134,7 @@ export default function Products() {
     }
 
     return filtered;
-  }, [products, searchTerm, selectedCategory, sortBy]);
+  }, [products, searchTerm, selectedCategory, selectedColor, selectedSize, selectedThickness, sortBy]);
 
   if (loading) {
     return (
@@ -160,7 +209,7 @@ export default function Products() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {COLORS.map((color) => (
+                      {colorOptions.map((color) => (
                         <SelectItem key={color} value={color}>{color}</SelectItem>
                       ))}
                     </SelectContent>
@@ -175,7 +224,7 @@ export default function Products() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {SIZES.map((size) => (
+                      {sizeOptions.map((size) => (
                         <SelectItem key={size} value={size}>{size}</SelectItem>
                       ))}
                     </SelectContent>
@@ -190,7 +239,7 @@ export default function Products() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {THICKNESS.map((thickness) => (
+                      {thicknessOptions.map((thickness) => (
                         <SelectItem key={thickness} value={thickness}>{thickness}</SelectItem>
                       ))}
                     </SelectContent>
