@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
@@ -38,39 +38,45 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   const isAdmin = roles.includes('admin');
+  const loadedUserId = useRef<string | null>(null);
 
   useEffect(() => {
-    // Set up auth state listener
+    // INITIAL_SESSION covers the stored session, so there is no separate
+    // getSession() call to avoid fetching everything twice on startup.
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
 
-        if (session?.user) {
-          // Keep loading until profile and roles are resolved, otherwise guards
-          // see an authenticated user with an empty roles array and redirect.
-          setLoading(true);
-          setTimeout(() => {
-            fetchUserData(session.user.id).finally(() => setLoading(false));
-          }, 0);
-        } else {
+        const userId = session?.user?.id ?? null;
+
+        if (!userId) {
+          loadedUserId.current = null;
           setProfile(null);
           setRoles([]);
           setLoading(false);
+          return;
         }
+
+        // TOKEN_REFRESHED fires for a user whose data is already loading or
+        // loaded. Refetching there multiplies requests and helps trip the
+        // Supabase rate limit, which ends in a failed refresh and a forced
+        // sign-out. Loading is left alone so an in-flight fetch still owns it.
+        if (loadedUserId.current === userId) {
+          return;
+        }
+
+        loadedUserId.current = userId;
+        // Keep loading until profile and roles are resolved, otherwise guards
+        // see an authenticated user with an empty roles array and redirect.
+        setLoading(true);
+        // Supabase holds an internal lock for the duration of this callback,
+        // so the queries have to run outside it.
+        setTimeout(() => {
+          fetchUserData(userId).finally(() => setLoading(false));
+        }, 0);
       }
     );
-
-    // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        fetchUserData(session.user.id).finally(() => setLoading(false));
-      } else {
-        setLoading(false);
-      }
-    });
 
     return () => subscription.unsubscribe();
   }, []);
