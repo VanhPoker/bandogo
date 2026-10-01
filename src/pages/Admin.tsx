@@ -339,8 +339,11 @@ const Admin = () => {
   };
 
   useEffect(() => {
-    if (!loading && (!user || !isAdmin)) {
+    if (loading) return;
+    if (!user) {
       navigate("/auth");
+    } else if (!isAdmin) {
+      navigate("/");
     }
   }, [user, isAdmin, loading, navigate]);
 
