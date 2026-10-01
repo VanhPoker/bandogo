@@ -61,6 +61,7 @@ export default function Contact() {
     reason: "",
     message: ""
   });
+  const [mapIndex, setMapIndex] = useState(0);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -337,13 +338,27 @@ export default function Contact() {
           <h2 className="text-2xl font-bold mb-8">Bản đồ vị trí</h2>
           <Card>
             <CardContent className="p-0">
-              <div className="w-full h-96 bg-muted rounded-lg flex items-center justify-center">
-                <div className="text-center text-muted-foreground">
-                  <MapPin className="w-12 h-12 mx-auto mb-2" />
-                  <p>Google Maps sẽ được tích hợp tại đây</p>
-                  <p className="text-sm">Hiển thị vị trí các showroom và văn phòng</p>
-                </div>
+              <div className="flex flex-wrap gap-2 p-4">
+                {LOCATIONS.map((location, index) => (
+                  <Button
+                    key={location.name}
+                    variant={index === mapIndex ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setMapIndex(index)}
+                  >
+                    <MapPin className="w-4 h-4 mr-1" />
+                    {location.name}
+                  </Button>
+                ))}
               </div>
+              <iframe
+                title={`Bản đồ ${LOCATIONS[mapIndex].name}`}
+                src={`https://maps.google.com/maps?q=${encodeURIComponent(LOCATIONS[mapIndex].address)}&z=15&output=embed`}
+                className="w-full h-96 border-0 rounded-b-lg"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                allowFullScreen
+              />
             </CardContent>
           </Card>
         </section>
